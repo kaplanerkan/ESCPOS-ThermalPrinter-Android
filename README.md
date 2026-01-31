@@ -1,3 +1,4 @@
+[![Android CI](https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android/actions/workflows/android.yml/badge.svg)](https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android/actions/workflows/android.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Special Thanks
