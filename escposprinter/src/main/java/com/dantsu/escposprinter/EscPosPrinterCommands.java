@@ -755,16 +755,67 @@ public class EscPosPrinterCommands {
     }
 
     /**
-     * Cut the paper
+     * Cut the paper with default feed (65 dots ~ 8mm).
      *
      * @return Fluent interface
      */
     public EscPosPrinterCommands cutPaper() throws EscPosConnectionException {
+        return this.cutPaper(65);
+    }
+
+    /**
+     * Cut the paper with specified feed before cutting.
+     *
+     * @param feedDots Number of dots to feed before cutting (0-255)
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands cutPaper(int feedDots) throws EscPosConnectionException {
         if (!this.printerConnection.isConnected()) {
             return this;
         }
 
-        this.printerConnection.write(new byte[]{0x1D, 0x56, 0x01});
+        if (feedDots < 0) {
+            feedDots = 0;
+        } else if (feedDots > 255) {
+            feedDots = 255;
+        }
+
+        // GS V 66 n - Partial cut with feed
+        // Feeds paper n dots, then performs a partial cut
+        this.printerConnection.write(new byte[]{0x1D, 0x56, 0x42, (byte) feedDots});
+        this.printerConnection.send(100);
+        return this;
+    }
+
+    /**
+     * Full cut the paper with default feed (65 dots ~ 8mm).
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands fullCutPaper() throws EscPosConnectionException {
+        return this.fullCutPaper(65);
+    }
+
+    /**
+     * Full cut the paper with specified feed before cutting.
+     *
+     * @param feedDots Number of dots to feed before cutting (0-255)
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands fullCutPaper(int feedDots) throws EscPosConnectionException {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+
+        if (feedDots < 0) {
+            feedDots = 0;
+        } else if (feedDots > 255) {
+            feedDots = 255;
+        }
+
+        // GS V 65 n - Full cut with feed
+        // Feeds paper n dots, then performs a full cut
+        this.printerConnection.write(new byte[]{0x1D, 0x56, 0x41, (byte) feedDots});
         this.printerConnection.send(100);
         return this;
     }

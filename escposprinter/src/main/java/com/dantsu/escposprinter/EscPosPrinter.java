@@ -314,4 +314,54 @@ public class EscPosPrinter extends EscPosPrinterSize {
     public EscPosPrinterCommands getPrinterCommands() {
         return this.printer;
     }
+
+    /**
+     * Cut the paper with default feed (65 dots ~ 8mm).
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinter cutPaper() throws EscPosConnectionException {
+        if (this.printer != null) {
+            this.printer.cutPaper();
+        }
+        return this;
+    }
+
+    /**
+     * Cut the paper with specified feed before cutting.
+     *
+     * @param feedDots Number of dots to feed before cutting (0-255)
+     * @return Fluent interface
+     */
+    public EscPosPrinter cutPaper(int feedDots) throws EscPosConnectionException {
+        if (this.printer != null) {
+            this.printer.cutPaper(feedDots);
+        }
+        return this;
+    }
+
+    /**
+     * Full cut the paper with default feed (65 dots ~ 8mm).
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinter fullCutPaper() throws EscPosConnectionException {
+        if (this.printer != null) {
+            this.printer.fullCutPaper();
+        }
+        return this;
+    }
+
+    /**
+     * Full cut the paper with specified feed before cutting.
+     *
+     * @param feedDots Number of dots to feed before cutting (0-255)
+     * @return Fluent interface
+     */
+    public EscPosPrinter fullCutPaper(int feedDots) throws EscPosConnectionException {
+        if (this.printer != null) {
+            this.printer.fullCutPaper(feedDots);
+        }
+        return this;
+    }
 }
