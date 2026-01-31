@@ -5,7 +5,7 @@ minSdk = "24"
 targetSdk = "36"
 
 # Build tools
-agp = "8.2.2"
+agp = "8.13.2"
 kotlin = "1.9.0"
 
 # AndroidX

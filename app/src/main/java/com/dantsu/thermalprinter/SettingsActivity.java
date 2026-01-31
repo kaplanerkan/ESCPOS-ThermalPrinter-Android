@@ -331,25 +331,37 @@ public class SettingsActivity extends AppCompatActivity {
         // Paper Cut buttons
         binding.btnPartialCut.setOnClickListener(v -> executePrinterCommand(() -> {
             if (printer != null) {
-                int feed = binding.seekCutFeed.getProgress();
-                printer.getPrinterCommands().cutPaper(feed);
+                try {
+                    int feed = binding.seekCutFeed.getProgress();
+                    printer.getPrinterCommands().cutPaper(feed);
+                } catch (Exception e) {
+                    mainHandler.post(() -> showToast("Cut error: " + e.getMessage()));
+                }
             }
         }));
 
         binding.btnFullCut.setOnClickListener(v -> executePrinterCommand(() -> {
             if (printer != null) {
-                int feed = binding.seekCutFeed.getProgress();
-                printer.getPrinterCommands().feedPaper(feed);
-                printer.getPrinterCommands().cutPaper();
+                try {
+                    int feed = binding.seekCutFeed.getProgress();
+                    printer.getPrinterCommands().feedPaper(feed);
+                    printer.getPrinterCommands().cutPaper();
+                } catch (Exception e) {
+                    mainHandler.post(() -> showToast("Cut error: " + e.getMessage()));
+                }
             }
         }));
 
         // Cash Box button
         binding.btnOpenCashBox.setOnClickListener(v -> executePrinterCommand(() -> {
             if (printer != null) {
-                // 0 = pin 2, 1 = pin 5
-                int pin = binding.spinnerCashBoxPin.getSelectedItemPosition();
-                printer.openCashBox(pin);
+                try {
+                    // 0 = pin 2, 1 = pin 5
+                    int pin = binding.spinnerCashBoxPin.getSelectedItemPosition();
+                    printer.openCashBox(pin);
+                } catch (Exception e) {
+                    mainHandler.post(() -> showToast("Cash box error: " + e.getMessage()));
+                }
             }
         }));
 
