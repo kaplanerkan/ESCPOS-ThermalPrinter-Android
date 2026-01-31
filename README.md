@@ -14,6 +14,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 ## Table of contents
 
 - [Android version](#android-version)
+- [What's New in v3.4.0](#whats-new-in-v340)
 - [Tested printers](#tested-printers)
 - [Test It !](#test-it-)
 - [Installation](#installation)
@@ -46,6 +47,36 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 ## Android version
 
 Developed for SDK version 24 (Android 7.0 Nougat) and above. Supports up to Android 14 (API 34).
+
+## What's New in v3.4.0
+
+This fork includes numerous improvements and bug fixes:
+
+### New Features
+- **Printer Status Query** - Check printer status, paper level, cover state, and errors (#528)
+- **Cash Drawer Control** - Enable/disable cash box, select pin connector (#557)
+- **Raw ESC/POS Commands** - Send custom commands with `printRaw()` and `printRawHex()` (#570)
+- **Font Selection** - Choose between fonts A, B, C, D, E with `<font font='b'>` (#555)
+- **Strikethrough Text** - Add strikethrough effect with `<s>` tag (#556)
+- **Image Processing Delay** - Configurable delay to prevent premature paper cutting (#533)
+
+### Bug Fixes
+- **Android 14 Compatibility** - Fixed `registerReceiver` crash with `RECEIVER_NOT_EXPORTED` flag
+- **Paper Cutting** - Fixed premature cutting with proper feed-before-cut command (#563)
+- **Bluetooth Half Printing** - Added chunked data sending for reliable Bluetooth printing (#564)
+- **TCP Timeout** - Fixed connection timeout (was 30ms, now 5000ms)
+- **Less-than Symbol** - Fixed `<` character being interpreted as tag (#436)
+- **Barcode/QR Centering** - Fixed alignment issues when printing barcode then QR code (#542)
+- **AGP 8.x Compatibility** - Fixed "SoftwareComponent 'release' not found" error (#567)
+- **USB Connection** - Improved compatibility with non-standard USB printers (#498)
+
+### Performance
+- **Optimized Image Processing** - `bitmapToBytes()` uses batch pixel retrieval for faster processing (#490)
+
+### Updates
+- Gradle 8.2, Android Gradle Plugin 8.1.2
+- Java 17, compileSdk/targetSdk 34
+- Updated dependencies (appcompat 1.7.0, zxing 3.5.3)
 
 
 ## Tested printers
