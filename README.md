@@ -16,9 +16,12 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 
 ## Screenshots
 
-| Main Screen | Settings | Print Test |
-|-------------|----------|------------|
-| ![Main](screenshots/scrcpy_3K8QyU0c8B.png) | ![Settings](screenshots/scrcpy_58hUCk0FN0.png) | ![Print](screenshots/scrcpy_6KlNCAWeq7.png) |
+| | | |
+|:---:|:---:|:---:|
+| ![1](screenshots/scrcpy_3K8QyU0c8B.png) | ![2](screenshots/scrcpy_58hUCk0FN0.png) | ![3](screenshots/scrcpy_6KlNCAWeq7.png) |
+| ![4](screenshots/scrcpy_JMGeHVPWAM.png) | ![5](screenshots/scrcpy_OcVUwH23g5.png) | ![6](screenshots/scrcpy_RY606FHQ2g.png) |
+| ![7](screenshots/scrcpy_ZWSoVOPE5T.png) | ![8](screenshots/scrcpy_byBV81cen9.png) | ![9](screenshots/scrcpy_qga13QwQMF.png) |
+| ![10](screenshots/scrcpy_rgUvAzXGWB.png) | | |
 
 ## Features
 
