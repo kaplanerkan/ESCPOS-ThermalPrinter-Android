@@ -107,6 +107,10 @@ public class PrinterTextParserColumn {
                 this.appendString(textColumn.substring(offset, openTagIndex));
 
                 if (closeTagIndex == -1) {
+                    // No closing '>' found - append the '<' and remaining text as literal
+                    if (openTagIndex < textColumn.length()) {
+                        this.appendString(textColumn.substring(openTagIndex));
+                    }
                     break;
                 }
 
