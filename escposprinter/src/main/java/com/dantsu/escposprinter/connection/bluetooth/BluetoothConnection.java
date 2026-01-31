@@ -28,6 +28,10 @@ public class BluetoothConnection extends DeviceConnection {
     public BluetoothConnection(BluetoothDevice device) {
         super();
         this.device = device;
+        // Bluetooth-optimized settings for better reliability
+        this.chunkSize = 200;      // Smaller chunks for Bluetooth
+        this.chunkDelayMs = 20;    // Longer delay between chunks
+        this.bytesPerMs = 8;       // Slower byte rate assumption
     }
 
     /**

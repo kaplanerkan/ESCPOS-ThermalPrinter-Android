@@ -313,6 +313,38 @@ public class EscPosPrinterCommands {
     }
 
     /**
+     * Get the device connection instance.
+     *
+     * @return DeviceConnection instance
+     */
+    public DeviceConnection getConnection() {
+        return this.printerConnection;
+    }
+
+    /**
+     * Set chunk size for sending large data.
+     * Useful for slow connections like Bluetooth.
+     *
+     * @param chunkSize Size of each chunk in bytes
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setChunkSize(int chunkSize) {
+        this.printerConnection.setChunkSize(chunkSize);
+        return this;
+    }
+
+    /**
+     * Set delay between chunks.
+     *
+     * @param delayMs Delay in milliseconds
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setChunkDelay(int delayMs) {
+        this.printerConnection.setChunkDelay(delayMs);
+        return this;
+    }
+
+    /**
      * Close the socket connection and stream with the device.
      */
     public void disconnect() {
