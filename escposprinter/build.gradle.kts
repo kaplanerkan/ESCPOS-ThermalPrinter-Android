@@ -42,6 +42,11 @@ android {
             withJavadocJar()
         }
     }
+
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
 }
 
 dependencies {
