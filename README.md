@@ -28,6 +28,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
   - [USB code example](#usb-code-example)
 - [Raw ESC/POS Commands](#raw-escpos-commands)
 - [Charset encoding](#charset-encoding)
+  - [Special Characters](#special-characters--etc)
 - [Formatted text : syntax guide](#formatted-text--syntax-guide)
 - [ESC/POS Commands Reference](#escpos-commands-reference)
 - [Class list](#class-list)
@@ -326,6 +327,49 @@ EscPosPrinter printer = new EscPosPrinter(deviceConnection, 203, 48f, 32, new Es
 
 `escPosCharsetId` may change with printer model.
 [Follow this link to find `escPosCharsetId` that works with many printers](https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=32)
+
+### Special Characters (₹, €, etc.)
+
+Some currency symbols like Indian Rupee (₹) are not available in standard thermal printer charsets. Here are solutions:
+
+**Option 1: Print as image (most reliable)**
+
+```java
+// Create a small bitmap with the ₹ symbol
+Bitmap rupeeBitmap = Bitmap.createBitmap(24, 24, Bitmap.Config.ARGB_8888);
+Canvas canvas = new Canvas(rupeeBitmap);
+Paint paint = new Paint();
+paint.setTextSize(20);
+paint.setColor(Color.BLACK);
+paint.setAntiAlias(true);
+canvas.drawColor(Color.WHITE);
+canvas.drawText("₹", 2, 20, paint);
+
+// Convert to hex string and use in formatted text
+String rupeeHex = PrinterTextParserImg.bitmapToHexadecimalString(printer, rupeeBitmap);
+printer.printFormattedText("[L]<img>" + rupeeHex + "</img> 1,299.00\n");
+```
+
+**Option 2: Use text replacement**
+
+```java
+String price = "₹1,299.00";
+// Replace ₹ with "Rs." for printers without symbol support
+String printablePrice = price.replace("₹", "Rs.");
+printer.printFormattedText("[L]" + printablePrice + "\n");
+```
+
+**Option 3: Try different charset encodings**
+
+Some printers support special charsets. Try charset ID 20-30 range:
+
+```java
+// Test different charset IDs to find one that supports your symbols
+EscPosPrinter printer = new EscPosPrinter(
+    connection, 203, 48f, 32,
+    new EscPosCharsetEncoding("UTF-8", 28)  // Try different IDs
+);
+```
 
 ## Formatted text : syntax guide
 
