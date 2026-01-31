@@ -130,6 +130,7 @@ public class PrinterTextParserColumn {
                                 textParser.dropLastTextSize();
                                 textParser.dropLastTextColor();
                                 textParser.dropLastTextReverseColor();
+                                textParser.dropLastTextFont();
                                 break;
                         }
                     } else {
@@ -217,6 +218,29 @@ public class PrinterTextParserColumn {
                                     textParser.addTextColor(textParser.getLastTextColor());
                                     textParser.addTextReverseColor(textParser.getLastTextReverseColor());
                                 }
+
+                                if (textParserTag.hasAttribute(PrinterTextParser.ATTR_FORMAT_TEXT_FONT_FONT)) {
+                                    switch (textParserTag.getAttribute(PrinterTextParser.ATTR_FORMAT_TEXT_FONT_FONT).toLowerCase()) {
+                                        case PrinterTextParser.ATTR_FORMAT_TEXT_FONT_FONT_A:
+                                        default:
+                                            textParser.addTextFont(EscPosPrinterCommands.TEXT_FONT_A);
+                                            break;
+                                        case PrinterTextParser.ATTR_FORMAT_TEXT_FONT_FONT_B:
+                                            textParser.addTextFont(EscPosPrinterCommands.TEXT_FONT_B);
+                                            break;
+                                        case PrinterTextParser.ATTR_FORMAT_TEXT_FONT_FONT_C:
+                                            textParser.addTextFont(EscPosPrinterCommands.TEXT_FONT_C);
+                                            break;
+                                        case PrinterTextParser.ATTR_FORMAT_TEXT_FONT_FONT_D:
+                                            textParser.addTextFont(EscPosPrinterCommands.TEXT_FONT_D);
+                                            break;
+                                        case PrinterTextParser.ATTR_FORMAT_TEXT_FONT_FONT_E:
+                                            textParser.addTextFont(EscPosPrinterCommands.TEXT_FONT_E);
+                                            break;
+                                    }
+                                } else {
+                                    textParser.addTextFont(textParser.getLastTextFont());
+                                }
                                 break;
                         }
                     }
@@ -295,11 +319,15 @@ public class PrinterTextParserColumn {
 
     private PrinterTextParserColumn prependString(String text) {
         PrinterTextParser textParser = this.textParserLine.getTextParser();
-        return this.prependString(text, textParser.getLastTextSize(), textParser.getLastTextColor(), textParser.getLastTextReverseColor(), textParser.getLastTextBold(), textParser.getLastTextUnderline(), textParser.getLastTextDoubleStrike());
+        return this.prependString(text, textParser.getLastTextSize(), textParser.getLastTextColor(), textParser.getLastTextReverseColor(), textParser.getLastTextBold(), textParser.getLastTextUnderline(), textParser.getLastTextDoubleStrike(), textParser.getLastTextFont());
     }
 
     private PrinterTextParserColumn prependString(String text, byte[] textSize, byte[] textColor, byte[] textReverseColor, byte[] textBold, byte[] textUnderline, byte[] textDoubleStrike) {
-        return this.prependElement(new PrinterTextParserString(this, text, textSize, textColor, textReverseColor, textBold, textUnderline, textDoubleStrike));
+        return this.prependString(text, textSize, textColor, textReverseColor, textBold, textUnderline, textDoubleStrike, EscPosPrinterCommands.TEXT_FONT_A);
+    }
+
+    private PrinterTextParserColumn prependString(String text, byte[] textSize, byte[] textColor, byte[] textReverseColor, byte[] textBold, byte[] textUnderline, byte[] textDoubleStrike, byte[] textFont) {
+        return this.prependElement(new PrinterTextParserString(this, text, textSize, textColor, textReverseColor, textBold, textUnderline, textDoubleStrike, textFont));
     }
 
     private PrinterTextParserColumn appendString(String text) {
@@ -308,12 +336,15 @@ public class PrinterTextParserColumn {
         if (textParser.getLastTextStrikethrough()) {
             text = PrinterTextParser.applyStrikethrough(text);
         }
-        return this.appendString(text, textParser.getLastTextSize(), textParser.getLastTextColor(), textParser.getLastTextReverseColor(), textParser.getLastTextBold(), textParser.getLastTextUnderline(), textParser.getLastTextDoubleStrike());
+        return this.appendString(text, textParser.getLastTextSize(), textParser.getLastTextColor(), textParser.getLastTextReverseColor(), textParser.getLastTextBold(), textParser.getLastTextUnderline(), textParser.getLastTextDoubleStrike(), textParser.getLastTextFont());
     }
 
     private PrinterTextParserColumn appendString(String text, byte[] textSize, byte[] textColor, byte[] textReverseColor, byte[] textBold, byte[] textUnderline, byte[] textDoubleStrike) {
-        EscPosPrinter printer = this.textParserLine.getTextParser().getPrinter();
-        return this.appendElement(new PrinterTextParserString(this, text, textSize, textColor, textReverseColor, textBold, textUnderline, textDoubleStrike));
+        return this.appendString(text, textSize, textColor, textReverseColor, textBold, textUnderline, textDoubleStrike, EscPosPrinterCommands.TEXT_FONT_A);
+    }
+
+    private PrinterTextParserColumn appendString(String text, byte[] textSize, byte[] textColor, byte[] textReverseColor, byte[] textBold, byte[] textUnderline, byte[] textDoubleStrike, byte[] textFont) {
+        return this.appendElement(new PrinterTextParserString(this, text, textSize, textColor, textReverseColor, textBold, textUnderline, textDoubleStrike, textFont));
     }
 
     private PrinterTextParserColumn prependImage(String textAlign, String hexString) {

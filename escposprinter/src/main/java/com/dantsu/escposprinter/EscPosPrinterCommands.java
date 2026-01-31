@@ -378,6 +378,23 @@ public class EscPosPrinterCommands {
     }
 
     /**
+     * Set the font for text printing.
+     *
+     * @param font Set the font. Use EscPosPrinterCommands.TEXT_FONT_... constants
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setFont(byte[] font) {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        if (font != null && !Arrays.equals(this.currentTextFont, font)) {
+            this.printerConnection.write(font);
+            this.currentTextFont = font;
+        }
+        return this;
+    }
+
+    /**
      * Print text with the connected printer.
      *
      * @param text Text to be printed
@@ -459,6 +476,7 @@ public class EscPosPrinterCommands {
     private byte[] currentTextBold = new byte[0];
     private byte[] currentTextUnderline = new byte[0];
     private byte[] currentTextDoubleStrike = new byte[0];
+    private byte[] currentTextFont = new byte[0];
 
     /**
      * Print text with the connected printer.

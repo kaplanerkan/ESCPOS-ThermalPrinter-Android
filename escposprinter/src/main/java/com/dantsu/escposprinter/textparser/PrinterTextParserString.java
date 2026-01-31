@@ -17,8 +17,13 @@ public class PrinterTextParserString implements IPrinterTextParserElement {
     private byte[] textBold;
     private byte[] textUnderline;
     private byte[] textDoubleStrike;
+    private byte[] textFont;
 
     public PrinterTextParserString(PrinterTextParserColumn printerTextParserColumn, String text, byte[] textSize, byte[] textColor, byte[] textReverseColor, byte[] textBold, byte[] textUnderline, byte[] textDoubleStrike) {
+        this(printerTextParserColumn, text, textSize, textColor, textReverseColor, textBold, textUnderline, textDoubleStrike, EscPosPrinterCommands.TEXT_FONT_A);
+    }
+
+    public PrinterTextParserString(PrinterTextParserColumn printerTextParserColumn, String text, byte[] textSize, byte[] textColor, byte[] textReverseColor, byte[] textBold, byte[] textUnderline, byte[] textDoubleStrike, byte[] textFont) {
         this.printer = printerTextParserColumn.getLine().getTextParser().getPrinter();
         this.text = text;
         this.textSize = textSize;
@@ -27,6 +32,7 @@ public class PrinterTextParserString implements IPrinterTextParserElement {
         this.textBold = textBold;
         this.textUnderline = textUnderline;
         this.textDoubleStrike = textDoubleStrike;
+        this.textFont = textFont;
     }
 
     @Override
@@ -66,6 +72,7 @@ public class PrinterTextParserString implements IPrinterTextParserElement {
      */
     @Override
     public PrinterTextParserString print(EscPosPrinterCommands printerSocket) throws EscPosEncodingException {
+        printerSocket.setFont(this.textFont);
         printerSocket.printText(this.text, this.textSize, this.textColor, this.textReverseColor, this.textBold, this.textUnderline, this.textDoubleStrike);
         return this;
     }

@@ -60,6 +60,13 @@ public class PrinterTextParser {
     public static final String ATTR_FORMAT_TEXT_FONT_COLOR_RED = "red";
     public static final String ATTR_FORMAT_TEXT_FONT_COLOR_BG_RED = "bg-red";
 
+    public static final String ATTR_FORMAT_TEXT_FONT_FONT = "font";
+    public static final String ATTR_FORMAT_TEXT_FONT_FONT_A = "a";
+    public static final String ATTR_FORMAT_TEXT_FONT_FONT_B = "b";
+    public static final String ATTR_FORMAT_TEXT_FONT_FONT_C = "c";
+    public static final String ATTR_FORMAT_TEXT_FONT_FONT_D = "d";
+    public static final String ATTR_FORMAT_TEXT_FONT_FONT_E = "e";
+
     public static final String ATTR_QRCODE_SIZE = "size";
     
     private static String regexAlignTags;
@@ -116,6 +123,7 @@ public class PrinterTextParser {
     private byte[][] textUnderline = {EscPosPrinterCommands.TEXT_UNDERLINE_OFF};
     private byte[][] textDoubleStrike = {EscPosPrinterCommands.TEXT_DOUBLE_STRIKE_OFF};
     private boolean[] textStrikethrough = {false};
+    private byte[][] textFont = {EscPosPrinterCommands.TEXT_FONT_A};
     private String text = "";
     
     public PrinterTextParser(EscPosPrinter printer) {
@@ -262,6 +270,22 @@ public class PrinterTextParser {
             result.append('\u0336'); // COMBINING LONG STROKE OVERLAY
         }
         return result.toString();
+    }
+
+    public byte[] getLastTextFont() {
+        return this.textFont[this.textFont.length - 1];
+    }
+
+    public PrinterTextParser addTextFont(byte[] newTextFont) {
+        this.textFont = PrinterTextParser.arrayBytePush(this.textFont, newTextFont);
+        return this;
+    }
+
+    public PrinterTextParser dropLastTextFont() {
+        if (this.textFont.length > 1) {
+            this.textFont = PrinterTextParser.arrayByteDropLast(this.textFont);
+        }
+        return this;
     }
 
     public PrinterTextParserLine[] parse() throws EscPosParserException, EscPosBarcodeException, EscPosEncodingException {

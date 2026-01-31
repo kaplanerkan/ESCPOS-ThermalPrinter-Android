@@ -418,6 +418,20 @@ Example :
 - `<font color='red'>Some text</font>` : red text - white background (Not working on all printer)
 - `<font color='bg-red'>Some text</font>` : white text - red background (Not working on all printer)
 
+#### Font Type
+
+You can select different font types (A, B, C, D, E). Note that not all printers support all fonts - most only support A and B.
+
+- `<font font='a'>Some text</font>` : Font A (default, usually 12x24 dots)
+- `<font font='b'>Some text</font>` : Font B (usually 9x17 dots, smaller)
+- `<font font='c'>Some text</font>` : Font C (if supported by printer)
+- `<font font='d'>Some text</font>` : Font D (if supported by printer)
+- `<font font='e'>Some text</font>` : Font E (if supported by printer)
+
+You can combine font attributes:
+- `<font size='big' font='b'>Big text in Font B</font>`
+- `<font color='red' font='a'>Red text in Font A</font>`
+
 #### Bold
 
 `<b></b>` tag allows you to change the font weight.
