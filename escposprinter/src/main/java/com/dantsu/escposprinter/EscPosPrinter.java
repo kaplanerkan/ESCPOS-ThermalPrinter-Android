@@ -346,6 +346,43 @@ public class EscPosPrinter extends EscPosPrinterSize {
     }
 
     /**
+     * Enable or disable batch mode.
+     * In batch mode, all data is buffered and sent in one transfer at the end.
+     * This significantly improves performance for USB connections.
+     *
+     * @param enabled true to enable batch mode
+     * @return Fluent interface
+     */
+    public EscPosPrinter setBatchMode(boolean enabled) {
+        if (this.printer != null) {
+            this.printer.setBatchMode(enabled);
+        }
+        return this;
+    }
+
+    /**
+     * Check if batch mode is enabled.
+     *
+     * @return true if batch mode is enabled
+     */
+    public boolean isBatchMode() {
+        return this.printer != null && this.printer.isBatchMode();
+    }
+
+    /**
+     * Flush all buffered data to the printer.
+     * Call this at the end of a print job when using batch mode.
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinter flushBatch() throws EscPosConnectionException {
+        if (this.printer != null) {
+            this.printer.flushBatch();
+        }
+        return this;
+    }
+
+    /**
      * Get the underlying EscPosPrinterCommands instance for advanced operations.
      *
      * @return EscPosPrinterCommands instance

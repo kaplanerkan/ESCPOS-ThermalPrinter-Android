@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter hex values separated by spaces"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/editRawHex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Example: 1B 40 (Reset printer)"
+        android:text="1B 40"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btnSendRaw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Raw Command"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Common Commands:"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1B 40 - Reset printer\n1B 61 00 - Align left\n1B 61 01 - Align center\n1B 61 02 - Align right\n1B 45 01 - Bold ON\n1B 45 00 - Bold OFF\n1D 56 00 - Full cut\n1D 56 01 - Partial cut"
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:lineSpacingExtra="4dp"/>
+
+</LinearLayout>

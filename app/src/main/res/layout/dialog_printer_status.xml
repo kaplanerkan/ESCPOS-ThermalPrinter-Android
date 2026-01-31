@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnQueryStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Query Printer Status"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/txtPrinterStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status: Tap 'Query' to check printer status"
+        android:padding="12dp"
+        android:background="#F5F5F5"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Note: Not all printers support status queries. USB connections typically don't support reading."
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

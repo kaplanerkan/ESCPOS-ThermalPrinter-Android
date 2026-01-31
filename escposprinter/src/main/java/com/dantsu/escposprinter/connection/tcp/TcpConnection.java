@@ -9,6 +9,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import timber.log.Timber;
+
 public class TcpConnection extends DeviceConnection {
     private Socket socket = null;
     private String address;
@@ -40,6 +42,11 @@ public class TcpConnection extends DeviceConnection {
         this.address = address;
         this.port = port;
         this.timeout = timeout;
+
+        // TCP is a reliable protocol - no need for chunking
+        // Send all data at once for maximum performance
+        this.chunkSize = 0;  // 0 = no chunking
+        this.chunkDelayMs = 0;
     }
 
     /**
@@ -56,18 +63,27 @@ public class TcpConnection extends DeviceConnection {
      */
     public TcpConnection connect() throws EscPosConnectionException {
         if (this.isConnected()) {
+            Timber.tag("TcpConnection").d("Already connected to %s:%d", this.address, this.port);
             return this;
         }
+
+        Timber.tag("TcpConnection").i("Connecting to TCP %s:%d (timeout: %dms)", this.address, this.port, this.timeout);
+
         try {
             this.socket = new Socket();
             this.socket.connect(new InetSocketAddress(InetAddress.getByName(this.address), this.port), this.timeout);
             this.outputStream = this.socket.getOutputStream();
             this.inputStream = this.socket.getInputStream();
             this.data = new byte[0];
-        } catch (IOException e) {
-            e.printStackTrace();
+            Timber.tag("TcpConnection").i("TCP connected successfully to %s:%d", this.address, this.port);
+        } catch (SocketTimeoutException e) {
+            Timber.tag("TcpConnection").e(e, "TCP connection timeout: %s:%d", this.address, this.port);
             this.disconnect();
-            throw new EscPosConnectionException("Unable to connect to TCP device.");
+            throw new EscPosConnectionException("TCP connection timeout to " + this.address + ":" + this.port);
+        } catch (IOException e) {
+            Timber.tag("TcpConnection").e(e, "TCP connection failed: %s:%d - %s", this.address, this.port, e.getMessage());
+            this.disconnect();
+            throw new EscPosConnectionException("Unable to connect to TCP device: " + e.getMessage());
         }
         return this;
     }

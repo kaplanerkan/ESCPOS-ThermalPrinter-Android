@@ -6,6 +6,7 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -56,11 +57,21 @@ public class UsbOutputStream extends OutputStream {
             throw new IOException("Error during claim USB interface.");
         }
 
-        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes, offset, length);
         UsbRequest usbRequest = new UsbRequest();
         try {
             usbRequest.initialize(this.usbConnection, this.usbEndpoint);
-            if (!usbRequest.queue(buffer, bytes.length)) {
+            boolean queued;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Use modern API (Android 8.0+)
+                queued = usbRequest.queue(buffer);
+            } else {
+                // Use deprecated API for older versions
+                @SuppressWarnings("deprecation")
+                boolean result = usbRequest.queue(buffer, length);
+                queued = result;
+            }
+            if (!queued) {
                 throw new IOException("Error queueing USB request.");
             }
             this.usbConnection.requestWait();

@@ -1,5 +1,12 @@
-[![Jitpack package repository - ESCPOS-ThermalPrinter-Android v3.4.0](https://jitpack.io/v/kaplanerkan/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#kaplanerkan/ESCPOS-ThermalPrinter-Android/3.4.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Special Thanks
+
+A huge thank you to **Franck Alary** ([@DantSu](https://github.com/DantSu)) for creating this amazing library!
+
+This project is a fork of his excellent work: [DantSu/ESCPOS-ThermalPrinter-Android](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android)
+
+---
 
 > **Fork Note:** This is a maintained fork of [DantSu/ESCPOS-ThermalPrinter-Android](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android) with Android 14+ compatibility, updated dependencies, and bug fixes.
 
@@ -7,9 +14,40 @@
 
 Useful library to help Android developers to print with (Bluetooth, TCP, USB) ESC/POS thermal printers.
 
-## ✨ Supporting
+## Screenshots
 
-⭐ Star this repository to support this project. You will contribute to increase the visibility of this library 🙂
+| Phone | Tablet | Kiosk |
+|-------|--------|-------|
+| ![Phone](screenshots/phone.png) | ![Tablet](screenshots/tablet.png) | ![Kiosk](screenshots/kiosk.png) |
+
+## Features
+
+### App Features
+- **Fullscreen Immersive Mode** - No toolbar, full screen experience for all devices
+- **Responsive Design** - Optimized layouts for phones, tablets (7"+), and large kiosk displays (10"+)
+- **Turquoise Modern Theme** - Clean, modern UI with card-based design
+- **USB Auto-Detection** - Automatically detects and displays connected USB printer VID/PID
+- **Multiple Connection Types** - Bluetooth SPP, Bluetooth LE (BLE), USB, TCP/IP (WiFi/Ethernet)
+
+### Library Features
+- **Batch Mode (USB & TCP)** - Buffers all data and sends in one transfer for faster printing
+- **Printer Status Query** - Check printer status, paper level, cover state, and errors
+- **Cash Drawer Control** - Enable/disable cash box, select pin connector
+- **Raw ESC/POS Commands** - Send custom commands with `printRaw()` and `printRawHex()`
+- **Font Selection** - Choose between fonts A, B, C, D, E with `<font font='b'>`
+- **Strikethrough Text** - Add strikethrough effect with `<s>` tag
+- **Image Processing Delay** - Configurable delay to prevent premature paper cutting
+- **Line Spacing Control** - Set custom line spacing with `setLineSpacing()`
+
+## Responsive Layout
+
+The app automatically adapts to different screen sizes:
+
+| Screen Size | Layout | Dimensions |
+|-------------|--------|------------|
+| Phone (< 600dp) | Single column, stacked cards | 24sp title, 48dp buttons |
+| Tablet 7"+ (sw600dp) | Two columns (BT + TCP side by side) | 28sp title, 56dp buttons |
+| Kiosk 10"+ (sw720dp) | Three columns (BT + USB + TCP) | 32sp title, 64dp buttons |
 
 ## Table of contents
 
@@ -20,28 +58,15 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 - [Settings & Test Activity](#settings--test-activity)
 - [Installation](#installation)
 - [Bluetooth](#bluetooth)
-  - [Bluetooth permission](#bluetooth-permission)
-  - [Bluetooth code example](#bluetooth-code-example)
 - [TCP](#tcp)
-  - [TCP permission](#tcp-permission)
-  - [TCP code example](#tcp-code-example)
 - [USB](#usb)
-  - [USB permission](#usb-permission)
-  - [USB code example](#usb-code-example)
 - [Raw ESC/POS Commands](#raw-escpos-commands)
 - [Cash Drawer Control](#cash-drawer-control)
 - [Printer Status](#printer-status)
 - [Charset encoding](#charset-encoding)
-  - [Special Characters](#special-characters--etc)
 - [Formatted text : syntax guide](#formatted-text--syntax-guide)
 - [ESC/POS Commands Reference](#escpos-commands-reference)
 - [Class list](#class-list)
-  - [BluetoothPrintersConnections](#user-content-class--comdantsuescposprinterconnectionbluetoothbluetoothprintersconnections)
-  - [UsbPrintersConnections](#user-content-class--comdantsuescposprinterconnectionusbusbprintersconnections)
-  - [EscPosPrinter](#user-content-class--comdantsuescposprinterescposprinter)
-  - [PrinterTextParserImg](#user-content-class--comdantsuescposprintertextparserprintertextparserimg)
-  - [EscPosCharsetEncoding](#user-content-class--comdantsuescposprinterescposcharsetencoding)
-- [Projects using this library](#projects-using-this-library)
 - [Contributing](#contributing)
 
 
@@ -54,6 +79,11 @@ Developed for SDK version 24 (Android 7.0 Nougat) and above. Supports up to Andr
 This fork includes numerous improvements and bug fixes:
 
 ### New Features
+- **Batch Mode (USB & TCP)** - Buffers all print data and sends in one transfer for significantly faster printing
+- **Fullscreen Immersive Mode** - No toolbar, status bar, or navigation bar for kiosk/POS use
+- **Responsive Design** - Adaptive layouts for phones, tablets, and large kiosk displays
+- **USB Auto-Detection** - Automatically fills VID/PID when USB printer is connected
+- **Modern Turquoise Theme** - Clean, card-based UI design
 - **Printer Status Query** - Check printer status, paper level, cover state, and errors (#528)
 - **Cash Drawer Control** - Enable/disable cash box, select pin connector (#557)
 - **Raw ESC/POS Commands** - Send custom commands with `printRaw()` and `printRawHex()` (#570)
@@ -79,7 +109,70 @@ This fork includes numerous improvements and bug fixes:
 - Gradle 8.2, Android Gradle Plugin 8.1.2
 - Java 17, compileSdk/targetSdk 34
 - Updated dependencies (appcompat 1.7.0, zxing 3.5.3)
+- Kotlin DSL for build scripts
 
+## Error Logging
+
+All printer connection errors and operations are logged for debugging purposes:
+
+### Logcat
+Filter by tags containing: `DeviceConnection`, `TcpConnection`, `UsbConnection`, `BluetoothConnection`, `BluetoothLeConnection`, `BleDeviceScanner`
+
+### Log File
+Logs are automatically saved to app-specific storage:
+**`/storage/emulated/0/Android/data/com.karsu.thermalprinter/files/escpos_printer_log.txt`**
+
+- The log file is automatically rotated when it exceeds 5MB
+- Contains timestamps, log levels, tags, and detailed error messages
+- No storage permission required (uses app-specific external storage)
+
+### Viewing Logs
+```bash
+# Via ADB
+adb pull /sdcard/Android/data/com.karsu.thermalprinter/files/escpos_printer_log.txt
+
+# Or use any file manager app to navigate to the app's files folder
+```
+
+### USB Device Debugging
+
+When USB printing fails, the app logs detailed USB device information to help diagnose connection issues:
+
+```
+========== USB DEVICE SCAN ==========
+Total USB devices connected: 2
+---
+Device: /dev/bus/usb/002/024
+  Name: USB Touchscreen
+  VID: 44953 (0xAF79) PID: 32770 (0x8002)
+  Class: HID
+  Interfaces: 1
+    Interface 0: class=HID endpoints=1
+  Is Printer: NO
+---
+Device: /dev/bus/usb/001/005
+  Name: POS-58
+  VID: 1234 (0x04D2) PID: 5678 (0x162E)
+  Class: PRINTER
+  Interfaces: 1
+    Interface 0: class=PRINTER endpoints=2
+  Is Printer: YES
+========== END USB SCAN ==========
+```
+
+**USB Class Types:**
+| Class | Name | Description |
+|-------|------|-------------|
+| 0 | PER_INTERFACE | Class defined per interface |
+| 3 | HID | Human Interface Device (keyboard, mouse, touchscreen) |
+| 7 | PRINTER | Printer device |
+| 8 | MASS_STORAGE | USB storage device |
+| 255 | VENDOR_SPEC | Vendor-specific (some POS printers use this) |
+
+**Troubleshooting:**
+- If your printer shows as `HID` or another non-printer class, it may not be compatible
+- Many thermal printers use `PRINTER` (class 7) or `VENDOR_SPEC` (class 255)
+- Check the VID/PID values and enter them manually in the app if auto-detection fails
 
 ## Tested printers
 
@@ -104,11 +197,12 @@ The sample app includes a comprehensive Settings & Test Activity that allows you
 
 ### Features
 
-Access it by clicking the "Settings & Test" button in the main activity.
+Access it by clicking the "Advanced Settings & Tests" button in the main activity.
 
 **Connection Management:**
 - Bluetooth printer selection and connection
-- USB printer auto-detection
+- Bluetooth LE (BLE) printer scanning and connection
+- USB printer auto-detection with VID/PID display
 - TCP/IP connection with configurable IP and port
 - Real-time connection status display
 
@@ -168,6 +262,7 @@ android {
 2. Copy the activity files:
    - `res/layout/activity_settings.xml`
    - `java/.../SettingsActivity.java`
+   - `java/.../dialogs/*` (dialog helper classes)
 
 3. Add to `AndroidManifest.xml`:
 ```xml
@@ -183,23 +278,22 @@ startActivity(new Intent(this, SettingsActivity.class));
 
 ## Installation
 
-**Step 1.** Add the [JitPack](https://jitpack.io/#kaplanerkan/ESCPOS-ThermalPrinter-Android/3.4.0) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
+### Option 1: Use the original library (via JitPack)
 
-```
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
-}
-```
+For the original library by DantSu, follow the instructions at:
+[DantSu/ESCPOS-ThermalPrinter-Android](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android#installation)
 
-**Step 2.** Add the dependency in `/app/build.gradle` :
+### Option 2: Use this fork (clone or download)
 
-```
+This fork includes additional features and bug fixes. To use it:
+
+1. Clone or download this repository
+2. Import the `escposprinter` module into your Android project
+3. Add the module as a dependency in your app's `build.gradle`:
+
+```gradle
 dependencies {
-    ...
-    implementation 'com.github.kaplanerkan:ESCPOS-ThermalPrinter-Android:3.4.0'
+    implementation project(':escposprinter')
 }
 ```
 
@@ -322,6 +416,30 @@ new Thread(new Runnable() {
 ### USB permission
 
 Be sure to have `<uses-feature android:name="android.hardware.usb.host" />` in your `AndroidManifest.xml`.
+
+For automatic USB device detection, add an intent-filter to your activity:
+
+```xml
+<activity android:name=".MainActivity">
+    <intent-filter>
+        <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+    </intent-filter>
+    <meta-data
+        android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+        android:resource="@xml/device_filter" />
+</activity>
+```
+
+Create `res/xml/device_filter.xml`:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- USB Printer class -->
+    <usb-device class="7" />
+    <!-- Vendor specific (many POS printers) -->
+    <usb-device class="255" />
+</resources>
+```
 
 You have to check the USB permission in your app like this :
 
@@ -738,7 +856,7 @@ printer.setImageProcessingDelay(20);  // 20ms per line
 
 The default delay is 5ms per line of the image. For a 200-line image, this adds 1 second of processing time after the image data is sent, ensuring the printer has time to complete printing before subsequent commands (like paper cut) are executed.
 
-**⚠ WARNING ⚠** : This tag has several constraints :
+**WARNING** : This tag has several constraints :
 
 - A line that contains `<img></img>` can have only one alignment tag and it must be at the beginning of the line.
 - `<img>` must be directly preceded by nothing or an alignment tag (`[L][C][R]`).
@@ -750,18 +868,18 @@ The default delay is 5ms per line of the image. For a 200-line image, this adds 
 
 `<barcode></barcode>` tag allows you to print a barcode. Inside the tag you need to write the code number to print.
 
-- `<barcode>451278452159</barcode>` : **(12 numbers)**  
+- `<barcode>451278452159</barcode>` : **(12 numbers)**
 Prints a EAN13 barcode (height: 10mm, width: ~70% printer width, text: displayed below).
-- `<barcode type='ean8'>4512784</barcode>` : **(7 numbers)**  
+- `<barcode type='ean8'>4512784</barcode>` : **(7 numbers)**
 Prints a EAN8 barcode (height: 10mm, width: ~70% printer width, text: displayed below).
-- `<barcode type='upca' height='20'>4512784521</barcode>` : **(11 numbers)**  
+- `<barcode type='upca' height='20'>4512784521</barcode>` : **(11 numbers)**
 Prints a UPC-A barcode (height: 20mm, width: ~70% printer width, text: displayed below).
-- `<barcode type='upce' height='25' width='50' text='none'>512789</barcode>` : **(6 numbers)**  
+- `<barcode type='upce' height='25' width='50' text='none'>512789</barcode>` : **(6 numbers)**
 Prints a UPC-E barcode (height: 25mm, width: ~50mm, text: hidden).
-- `<barcode type='128' width='40' text='above'>DantSu</barcode>` : **(string)**  
+- `<barcode type='128' width='40' text='above'>DantSu</barcode>` : **(string)**
 Prints a barcode 128 (height: 10mm, width: ~40mm, text: displayed above).
 
-**⚠ WARNING ⚠** : This tag has several constraints :
+**WARNING** : This tag has several constraints :
 
 - A line that contains `<barcode></barcode>` can have only one alignment tag and it must be at the beginning of the line.
 - `<barcode>` must be directly preceded by nothing or an alignment tag (`[L][C][R]`).
@@ -777,7 +895,7 @@ Prints a QR code with a width and height of 20 millimeters.
 - `<qrcode size='25'>123456789</qrcode>` :
 Prints a QR code with a width and height of 25 millimeters.
 
-**⚠ WARNING ⚠** : This tag has several constraints :
+**WARNING** : This tag has several constraints :
 
 - A line that contains `<qrcode></qrcode>` can have only one alignment tag and it must be at the beginning of the line.
 - `<qrcode>` must be directly preceded by nothing or an alignment tag (`[L][C][R]`).
@@ -973,7 +1091,7 @@ Easy way to get the first bluetooth printer paired / connected.
 Get a list of bluetooth printers.
 - **return** `BluetoothConnection[]`
 
-⚠️ If the arrray returned by `getList()` does not contain you printer or if `selectFirstPaired()` does not return your printer. Read this issue : https://github.com/DantSu/ESCPOS-ThermalPrinter-Android/issues/80#issuecomment-729759832
+If the arrray returned by `getList()` does not contain you printer or if `selectFirstPaired()` does not return your printer. Read this issue : https://github.com/DantSu/ESCPOS-ThermalPrinter-Android/issues/80#issuecomment-729759832
 
 ### Class : `com.dantsu.escposprinter.connection.tcp.TcpConnection`
 
@@ -1201,4 +1319,34 @@ Convert hexadecimal string of the image data to bytes ESC/POS command.
 
 Please fork this repository and contribute back using pull requests.
 
-Any contributions, large or small, major features, bug fixes, are welcomed and appreciated but will be thoroughly reviewed
+Any contributions, large or small, major features, bug fixes, are welcomed and appreciated but will be thoroughly reviewed.
+
+## License
+
+This project is licensed under the MIT License - see below for details.
+
+```
+MIT License
+
+Copyright (c) 2026 Erkan Kaplan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+This fork is based on [DantSu/ESCPOS-ThermalPrinter-Android](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android) which is licensed under Apache License 2.0.

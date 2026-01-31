@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/content_padding">
+
+        <!-- Centered container with max width -->
+        <LinearLayout
+            android:layout_width="700dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Header -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:text="ESC/POS Thermal Printer"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_title"
+                android:textStyle="bold" />
+
+            <!-- Bluetooth Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:elevation="2dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_padding"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Bluetooth (SPP)"
+                    android:textColor="@color/bluetooth_color"
+                    android:textSize="@dimen/text_section_header"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/button_bluetooth_browse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:backgroundTint="@color/primary_light"
+                    android:text="Select"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_button"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <Button
+                    android:id="@+id/button_bluetooth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:backgroundTint="@color/bluetooth_color"
+                    android:text="Print"
+                    android:textAllCaps="false"
+                    android:textColor="@color/button_text"
+                    android:textSize="@dimen/text_button"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp" />
+            </LinearLayout>
+
+            <!-- USB Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:elevation="2dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_padding"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="USB"
+                    android:textColor="@color/usb_color"
+                    android:textSize="@dimen/text_section_header"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="@dimen/spacing_medium" />
+
+                <EditText
+                    android:id="@+id/edittext_usb_vendor_id"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:hint="VID"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_input" />
+
+                <EditText
+                    android:id="@+id/edittext_usb_product_id"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:hint="PID"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_input" />
+
+                <TextView
+                    android:id="@+id/txt_usb_status"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Auto"
+                    android:textColor="@color/text_hint"
+                    android:textSize="@dimen/text_hint"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <Button
+                    android:id="@+id/button_usb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:backgroundTint="@color/usb_color"
+                    android:text="Print"
+                    android:textAllCaps="false"
+                    android:textColor="@color/button_text"
+                    android:textSize="@dimen/text_button"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp" />
+            </LinearLayout>
+
+            <!-- TCP/IP Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:elevation="2dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_padding"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TCP/IP"
+                    android:textColor="@color/tcp_color"
+                    android:textSize="@dimen/text_section_header"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="@dimen/spacing_medium" />
+
+                <EditText
+                    android:id="@+id/edittext_tcp_ip"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:digits="0123456789."
+                    android:hint="IP Address"
+                    android:inputType="number"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_input" />
+
+                <EditText
+                    android:id="@+id/edittext_tcp_port"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:hint="Port"
+                    android:inputType="number"
+                    android:text="9100"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_input" />
+
+                <Button
+                    android:id="@+id/button_tcp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:backgroundTint="@color/tcp_color"
+                    android:text="Print"
+                    android:textAllCaps="false"
+                    android:textColor="@color/button_text"
+                    android:textSize="@dimen/text_button"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp" />
+            </LinearLayout>
+
+            <!-- Settings Button -->
+            <Button
+                android:id="@+id/button_settings"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_large"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:backgroundTint="@color/settings_color"
+                android:text="Advanced Settings &amp; Tests"
+                android:textAllCaps="false"
+                android:textColor="@color/button_text"
+                android:textSize="@dimen/text_button_large"
+                android:textStyle="bold" />
+
+            <!-- Log Section Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:elevation="2dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_padding"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Log File"
+                        android:textSize="@dimen/text_section_header"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"/>
+
+                    <TextView
+                        android:id="@+id/txt_log_path"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Log file path..."
+                        android:textSize="@dimen/text_hint"
+                        android:textColor="@color/text_secondary"
+                        android:maxLines="1"
+                        android:ellipsize="middle"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/button_share_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:text="Share"
+                    android:textAllCaps="false"
+                    android:textColor="@color/button_text"
+                    android:textSize="@dimen/text_button"
+                    android:backgroundTint="@color/primary"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"/>
+
+                <Button
+                    android:id="@+id/button_clear_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:text="Clear"
+                    android:textAllCaps="false"
+                    android:textColor="@color/button_text"
+                    android:textSize="@dimen/text_button"
+                    android:backgroundTint="@color/error"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

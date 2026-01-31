@@ -357,6 +357,41 @@ public class EscPosPrinterCommands {
     }
 
     /**
+     * Enable or disable batch mode.
+     * In batch mode, all send() calls only accumulate data in a buffer.
+     * The data is only sent when flushBatch() is called.
+     * This greatly improves performance for USB connections by reducing transfer overhead.
+     *
+     * @param enabled true to enable batch mode
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setBatchMode(boolean enabled) {
+        this.printerConnection.setBatchMode(enabled);
+        return this;
+    }
+
+    /**
+     * Check if batch mode is enabled.
+     *
+     * @return true if batch mode is enabled
+     */
+    public boolean isBatchMode() {
+        return this.printerConnection.isBatchMode();
+    }
+
+    /**
+     * Flush all buffered data to the printer.
+     * Call this at the end of a print job when using batch mode.
+     *
+     * @return Fluent interface
+     * @throws EscPosConnectionException if sending fails
+     */
+    public EscPosPrinterCommands flushBatch() throws EscPosConnectionException {
+        this.printerConnection.flushBatch();
+        return this;
+    }
+
+    /**
      * Close the socket connection and stream with the device.
      */
     public void disconnect() {

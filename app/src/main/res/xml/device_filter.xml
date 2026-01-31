@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Allow all USB devices -->
+    <!-- USB Printer class (0x07) -->
+    <usb-device class="7" />
+
+    <!-- CDC (Communications Device Class) - some printers use this -->
+    <usb-device class="2" />
+
+    <!-- Vendor specific class - many POS printers use this -->
+    <usb-device class="255" />
+
+    <!-- Common thermal printer vendors -->
+    <!-- Epson printers -->
+    <usb-device vendor-id="1208" />
+
+    <!-- Star Micronics -->
+    <usb-device vendor-id="1305" />
+
+    <!-- Bixolon -->
+    <usb-device vendor-id="7358" />
+
+    <!-- Citizen -->
+    <usb-device vendor-id="4418" />
+
+    <!-- Xprinter / Generic POS printers -->
+    <usb-device vendor-id="1046" />
+    <usb-device vendor-id="1155" />
+    <usb-device vendor-id="6790" />
+    <usb-device vendor-id="26728" />
+
+    <!-- Sewoo / HPRT / Rongta / Munbyn -->
+    <usb-device vendor-id="1659" />
+    <usb-device vendor-id="8137" />
+    <usb-device vendor-id="4070" />
+</resources>

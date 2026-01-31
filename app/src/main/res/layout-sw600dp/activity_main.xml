@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Centered container with max width for tablets -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:maxWidth="@dimen/content_max_width"
+            android:orientation="vertical"
+            android:padding="@dimen/content_padding">
+
+            <!-- Header -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/spacing_small"
+                android:text="ESC/POS Thermal Printer"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_title"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/spacing_xlarge"
+                android:text="Select connection type and print test page"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_subtitle" />
+
+            <!-- Two-column layout for tablet -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/card_margin">
+
+                <!-- Left column: Bluetooth -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:background="@drawable/card_background"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_medium"
+                        android:text="Bluetooth (SPP)"
+                        android:textColor="@color/bluetooth_color"
+                        android:textSize="@dimen/text_section_header"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/button_bluetooth_browse"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_marginBottom="@dimen/button_margin"
+                        android:backgroundTint="@color/primary_light"
+                        android:text="Select Printer Device"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_button" />
+
+                    <Button
+                        android:id="@+id/button_bluetooth"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:backgroundTint="@color/bluetooth_color"
+                        android:text="Print via Bluetooth"
+                        android:textAllCaps="false"
+                        android:textColor="@color/button_text"
+                        android:textSize="@dimen/text_button" />
+
+                </LinearLayout>
+
+                <!-- Right column: TCP/IP -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_small"
+                    android:background="@drawable/card_background"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_medium"
+                        android:text="TCP/IP (WiFi / Ethernet)"
+                        android:textColor="@color/tcp_color"
+                        android:textSize="@dimen/text_section_header"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/button_margin"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/spacing_small"
+                            android:layout_weight="2"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="IP Address"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_label" />
+
+                            <EditText
+                                android:id="@+id/edittext_tcp_ip"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:digits="0123456789."
+                                android:hint="192.168.1.100"
+                                android:inputType="number"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_hint"
+                                android:textSize="@dimen/text_input" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Port"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_label" />
+
+                            <EditText
+                                android:id="@+id/edittext_tcp_port"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="9100"
+                                android:inputType="number"
+                                android:text="9100"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_hint"
+                                android:textSize="@dimen/text_input" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/button_tcp"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:backgroundTint="@color/tcp_color"
+                        android:text="Print via TCP/IP"
+                        android:textAllCaps="false"
+                        android:textColor="@color/button_text"
+                        android:textSize="@dimen/text_button" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- USB Section - Full width -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:elevation="2dp"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_medium"
+                    android:text="USB Connection"
+                    android:textColor="@color/usb_color"
+                    android:textSize="@dimen/text_section_header"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/button_margin"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/spacing_small"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Vendor ID"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_label" />
+
+                        <EditText
+                            android:id="@+id/edittext_usb_vendor_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="e.g. 1234"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_hint"
+                            android:textSize="@dimen/text_input" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/spacing_small"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Product ID"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_label" />
+
+                        <EditText
+                            android:id="@+id/edittext_usb_product_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="e.g. 5678"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_hint"
+                            android:textSize="@dimen/text_input" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/button_usb"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:layout_gravity="bottom"
+                        android:backgroundTint="@color/usb_color"
+                        android:text="Print via USB"
+                        android:textAllCaps="false"
+                        android:textColor="@color/button_text"
+                        android:textSize="@dimen/text_button" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txt_usb_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Leave empty for auto-detect"
+                    android:textColor="@color/text_hint"
+                    android:textSize="@dimen/text_hint" />
+
+            </LinearLayout>
+
+            <!-- Settings Button -->
+            <Button
+                android:id="@+id/button_settings"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_large"
+                android:layout_marginTop="@dimen/button_margin"
+                android:backgroundTint="@color/settings_color"
+                android:text="Advanced Settings &amp; Tests"
+                android:textAllCaps="false"
+                android:textColor="@color/button_text"
+                android:textSize="@dimen/text_button_large"
+                android:textStyle="bold" />
+
+            <!-- Footer -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:gravity="center"
+                android:text="Use Advanced Settings for BLE, printer configuration, and detailed tests"
+                android:textColor="@color/text_hint"
+                android:textSize="@dimen/text_hint" />
+
+        </LinearLayout>
+    </FrameLayout>
+</ScrollView>

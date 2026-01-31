@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Paper Cut Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paper Cut"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feed (dots):"/>
+
+            <SeekBar
+                android:id="@+id/seekCutFeed"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:max="255"
+                android:progress="65"
+                android:layout_marginHorizontal="8dp"/>
+
+            <TextView
+                android:id="@+id/txtCutFeedValue"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:text="65"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/btnPartialCut"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Partial Cut"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:id="@+id/btnFullCut"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Full Cut"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Cash Box Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cash Box"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <CheckBox
+                android:id="@+id/chkCashBoxEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enabled"
+                android:checked="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="  Pin:"
+                android:layout_marginStart="16dp"/>
+
+            <Spinner
+                android:id="@+id/spinnerCashBoxPin"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btnOpenCashBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Open"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Line Spacing Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Line Spacing"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dots:"/>
+
+            <SeekBar
+                android:id="@+id/seekLineSpacing"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="30"
+                android:layout_marginHorizontal="8dp"/>
+
+            <TextView
+                android:id="@+id/txtLineSpacingValue"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:text="30"
+                android:gravity="center"/>
+
+            <Button
+                android:id="@+id/btnResetLineSpacing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Image Settings Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Image Settings"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delay (ms/line):"/>
+
+            <SeekBar
+                android:id="@+id/seekImageDelay"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:max="50"
+                android:progress="5"
+                android:layout_marginHorizontal="8dp"/>
+
+            <TextView
+                android:id="@+id/txtImageDelayValue"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/chkUseEscAsterisk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use ESC * Command for Images"/>
+
+    </LinearLayout>
+</ScrollView>

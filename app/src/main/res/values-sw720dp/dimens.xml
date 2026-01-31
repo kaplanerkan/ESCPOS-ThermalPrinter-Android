@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dimensions for large tablets/kiosks (10"+) - Bigger elements -->
+    <dimen name="content_max_width">1000dp</dimen>
+    <dimen name="content_padding">24dp</dimen>
+    <dimen name="card_padding">20dp</dimen>
+    <dimen name="card_margin">16dp</dimen>
+    <dimen name="card_corner_radius">16dp</dimen>
+
+    <!-- Text sizes - larger for kiosks -->
+    <dimen name="text_title">32sp</dimen>
+    <dimen name="text_subtitle">18sp</dimen>
+    <dimen name="text_section_header">20sp</dimen>
+    <dimen name="text_label">16sp</dimen>
+    <dimen name="text_input">18sp</dimen>
+    <dimen name="text_button">18sp</dimen>
+    <dimen name="text_button_large">20sp</dimen>
+    <dimen name="text_hint">14sp</dimen>
+
+    <!-- Button dimensions - larger -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_height_large">64dp</dimen>
+    <dimen name="button_margin">12dp</dimen>
+
+    <!-- Spacing - comfortable -->
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="spacing_xlarge">32dp</dimen>
+</resources>

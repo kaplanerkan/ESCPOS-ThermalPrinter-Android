@@ -19,6 +19,7 @@ espresso = "3.7.0"
 
 # Other
 zxing = "3.5.4"
+timber = "5.0.1"
 
 [libraries]
 # AndroidX
@@ -32,6 +33,7 @@ androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", 
 
 # Other
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
