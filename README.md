@@ -72,6 +72,7 @@ This fork includes numerous improvements and bug fixes:
 
 ### Performance
 - **Optimized Image Processing** - `bitmapToBytes()` uses batch pixel retrieval for faster processing (#490)
+- **Line Spacing Control** - Set custom line spacing with `setLineSpacing()`
 
 ### Updates
 - Gradle 8.2, Android Gradle Plugin 8.1.2
@@ -953,6 +954,15 @@ Active "ESC *" command for image printing.
 #### Method : `setImageProcessingDelay(int delayPerLine)`
 Set the image processing delay per line. Increase this value if paper cuts happen before image printing completes.
 - **param** `int delayPerLine` : Delay in milliseconds per line of image (default: 5)
+- **return** `Printer` : Fluent interface
+
+#### Method : `setLineSpacing(int dots)`
+Set custom line spacing in dots. Useful for adjusting spacing between lines for receipts.
+- **param** `int dots` : Number of dots for line spacing (0-255, default ~30)
+- **return** `Printer` : Fluent interface
+
+#### Method : `resetLineSpacing()`
+Reset line spacing to the default value (typically 1/6 inch).
 - **return** `Printer` : Fluent interface
 
 #### Method : `printFormattedText(String text)`

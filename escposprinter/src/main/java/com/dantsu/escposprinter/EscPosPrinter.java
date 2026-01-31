@@ -94,6 +94,31 @@ public class EscPosPrinter extends EscPosPrinterSize {
     }
 
     /**
+     * Set custom line spacing in dots.
+     *
+     * @param dots Number of dots for line spacing (0-255)
+     * @return Fluent interface
+     */
+    public EscPosPrinter setLineSpacing(int dots) {
+        if (this.printer != null) {
+            this.printer.setLineSpacing(dots);
+        }
+        return this;
+    }
+
+    /**
+     * Reset line spacing to default.
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinter resetLineSpacing() {
+        if (this.printer != null) {
+            this.printer.resetLineSpacing();
+        }
+        return this;
+    }
+
+    /**
      * Print a formatted text. Read the README.md for more information about text formatting options.
      *
      * @param text Formatted text to be printed.

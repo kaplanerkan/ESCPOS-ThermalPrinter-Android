@@ -32,8 +32,9 @@ public class EscPosPrinterCommands {
     public static final byte[] TEXT_WEIGHT_NORMAL = new byte[]{0x1B, 0x45, 0x00};
     public static final byte[] TEXT_WEIGHT_BOLD = new byte[]{0x1B, 0x45, 0x01};
 
-    public static final byte[] LINE_SPACING_24 = {0x1b, 0x33, 0x18};
-    public static final byte[] LINE_SPACING_30 = {0x1b, 0x33, 0x1e};
+    public static final byte[] LINE_SPACING_DEFAULT = new byte[]{0x1B, 0x32};      // ESC 2 - Default line spacing
+    public static final byte[] LINE_SPACING_24 = new byte[]{0x1B, 0x33, 0x18};     // ESC 3 24 - 24 dots
+    public static final byte[] LINE_SPACING_30 = new byte[]{0x1B, 0x33, 0x1E};     // ESC 3 30 - 30 dots
 
     public static final byte[] TEXT_FONT_A = new byte[]{0x1B, 0x4D, 0x00};
     public static final byte[] TEXT_FONT_B = new byte[]{0x1B, 0x4D, 0x01};
@@ -402,6 +403,52 @@ public class EscPosPrinterCommands {
             this.printerConnection.write(font);
             this.currentTextFont = font;
         }
+        return this;
+    }
+
+    /**
+     * Set line spacing using predefined constants.
+     * Use EscPosPrinterCommands.LINE_SPACING_... constants.
+     *
+     * @param lineSpacing Line spacing command bytes
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setLineSpacing(byte[] lineSpacing) {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        this.printerConnection.write(lineSpacing);
+        return this;
+    }
+
+    /**
+     * Set custom line spacing in dots.
+     * Line spacing = n × (vertical or horizontal motion unit)
+     * Typically 1 dot = 1/180 inch or 1/203 inch depending on printer.
+     *
+     * @param dots Number of dots for line spacing (0-255)
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setLineSpacing(int dots) {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        if (dots < 0) dots = 0;
+        if (dots > 255) dots = 255;
+        this.printerConnection.write(new byte[]{0x1B, 0x33, (byte) dots});
+        return this;
+    }
+
+    /**
+     * Reset line spacing to default (typically 1/6 inch or about 30 dots).
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands resetLineSpacing() {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        this.printerConnection.write(LINE_SPACING_DEFAULT);
         return this;
     }
 
