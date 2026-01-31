@@ -144,6 +144,8 @@ public class PrinterTextParserBarcode implements IPrinterTextParserElement {
         printerSocket
                 .setAlign(this.align)
                 .printBarcode(this.barcode);
+        // Reset alignment to left after barcode to avoid affecting subsequent elements
+        printerSocket.setAlign(EscPosPrinterCommands.TEXT_ALIGN_LEFT);
         return this;
     }
 }
