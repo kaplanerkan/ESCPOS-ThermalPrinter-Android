@@ -388,6 +388,69 @@ public class BluetoothLeConnection extends DeviceConnection {
     }
 
     /**
+     * Override send() to use BLE-specific write instead of outputStream.
+     */
+    @Override
+    public void send() throws EscPosConnectionException {
+        this.send(0);
+    }
+
+    /**
+     * Override send() to use BLE-specific write instead of outputStream.
+     */
+    @Override
+    public void send(int addWaitingTime) throws EscPosConnectionException {
+        // In batch mode, only accumulate waiting time - don't actually send
+        if (this.batchMode) {
+            this.batchWaitingTime += addWaitingTime;
+            Timber.tag(TAG).v("Batch mode: buffering %d bytes", this.data.length);
+            return;
+        }
+
+        if (!this.isConnected()) {
+            Timber.tag(TAG).e("Send failed: BLE not connected");
+            throw new EscPosConnectionException("Unable to send data to BLE device.");
+        }
+
+        if (this.data.length == 0) {
+            return;
+        }
+
+        Timber.tag(TAG).d("BLE sending %d bytes", this.data.length);
+
+        // Use BLE write method
+        byte[] dataToSend = this.data;
+        this.data = new byte[0];
+        write(dataToSend);
+
+        // Wait time based on data length
+        int waitingTime = addWaitingTime + dataToSend.length / this.bytesPerMs;
+        if (waitingTime > 0) {
+            try {
+                Thread.sleep(waitingTime);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        Timber.tag(TAG).d("BLE send complete: %d bytes", dataToSend.length);
+    }
+
+    /**
+     * Override flushBatch() for BLE.
+     */
+    @Override
+    public void flushBatch() throws EscPosConnectionException {
+        if (this.data.length > 0) {
+            boolean wasBatchMode = this.batchMode;
+            this.batchMode = false;
+            this.send(this.batchWaitingTime);
+            this.batchMode = wasBatchMode;
+            this.batchWaitingTime = 0;
+        }
+    }
+
+    /**
      * Disconnect from the BLE device.
      */
     @SuppressLint("MissingPermission")
