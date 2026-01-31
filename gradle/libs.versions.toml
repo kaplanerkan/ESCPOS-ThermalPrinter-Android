@@ -21,6 +21,11 @@ espresso = "3.7.0"
 zxing = "3.5.4"
 timber = "5.0.1"
 
+# Firebase
+firebaseBom = "33.7.0"
+googleServices = "4.4.2"
+firebaseCrashlytics = "3.0.2"
+
 [libraries]
 # AndroidX
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -35,6 +40,13 @@ androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", 
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
