@@ -3,8 +3,8 @@ plugins {
     `maven-publish`
 }
 
-val libraryVersionCode = 3004000
-val libraryVersionName = "3.4.0"
+val libraryVersionCode = 1000000
+val libraryVersionName = "1.0.0"
 
 android {
     namespace = "com.dantsu.escposprinter"

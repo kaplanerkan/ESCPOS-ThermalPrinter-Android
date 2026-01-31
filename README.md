@@ -52,7 +52,7 @@ The app automatically adapts to different screen sizes:
 ## Table of contents
 
 - [Android version](#android-version)
-- [What's New in v3.4.0](#whats-new-in-v340)
+- [What's New in v1.0.0](#whats-new-in-v100)
 - [Tested printers](#tested-printers)
 - [Test It !](#test-it-)
 - [Settings & Test Activity](#settings--test-activity)
@@ -74,7 +74,7 @@ The app automatically adapts to different screen sizes:
 
 Developed for SDK version 24 (Android 7.0 Nougat) and above. Supports up to Android 14 (API 34).
 
-## What's New in v3.4.0
+## What's New in v1.0.0
 
 This fork includes numerous improvements and bug fixes:
 
