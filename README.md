@@ -431,6 +431,14 @@ Example :
 - `<u>Some text</u>` text underlined
 - `<u type='double'>Some text</u>` text double-strike (Not working on all printer)
 
+#### Strikethrough
+
+`<s></s>` tag allows you to add strikethrough effect to text.
+
+- `<s>Some text</s>` text with strikethrough
+
+**Note:** Strikethrough uses Unicode combining characters (U+0336). This may not work on all printers. If your printer doesn't support it, consider using text replacement like `~~cancelled~~` or printing the text with a line image overlay.
+
 ### Image
 
 `<img></img>` tag allows you to print image. Inside the tag you need to write a hexadecimal string of an image.

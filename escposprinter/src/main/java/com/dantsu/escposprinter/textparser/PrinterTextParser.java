@@ -36,7 +36,8 @@ public class PrinterTextParser {
     public static final String TAGS_FORMAT_TEXT_FONT = "font";
     public static final String TAGS_FORMAT_TEXT_BOLD = "b";
     public static final String TAGS_FORMAT_TEXT_UNDERLINE = "u";
-    public static final String[] TAGS_FORMAT_TEXT = {PrinterTextParser.TAGS_FORMAT_TEXT_FONT, PrinterTextParser.TAGS_FORMAT_TEXT_BOLD, PrinterTextParser.TAGS_FORMAT_TEXT_UNDERLINE};
+    public static final String TAGS_FORMAT_TEXT_STRIKETHROUGH = "s";
+    public static final String[] TAGS_FORMAT_TEXT = {PrinterTextParser.TAGS_FORMAT_TEXT_FONT, PrinterTextParser.TAGS_FORMAT_TEXT_BOLD, PrinterTextParser.TAGS_FORMAT_TEXT_UNDERLINE, PrinterTextParser.TAGS_FORMAT_TEXT_STRIKETHROUGH};
 
     public static final String ATTR_FORMAT_TEXT_UNDERLINE_TYPE = "type";
     public static final String ATTR_FORMAT_TEXT_UNDERLINE_TYPE_NORMAL = "normal";
@@ -114,6 +115,7 @@ public class PrinterTextParser {
     private byte[][] textBold = {EscPosPrinterCommands.TEXT_WEIGHT_NORMAL};
     private byte[][] textUnderline = {EscPosPrinterCommands.TEXT_UNDERLINE_OFF};
     private byte[][] textDoubleStrike = {EscPosPrinterCommands.TEXT_DOUBLE_STRIKE_OFF};
+    private boolean[] textStrikethrough = {false};
     private String text = "";
     
     public PrinterTextParser(EscPosPrinter printer) {
@@ -224,7 +226,44 @@ public class PrinterTextParser {
         }
         return this;
     }
-    
+
+    public boolean getLastTextStrikethrough() {
+        return this.textStrikethrough[this.textStrikethrough.length - 1];
+    }
+
+    public PrinterTextParser addTextStrikethrough(boolean newTextStrikethrough) {
+        boolean[] newArr = new boolean[this.textStrikethrough.length + 1];
+        System.arraycopy(this.textStrikethrough, 0, newArr, 0, this.textStrikethrough.length);
+        newArr[this.textStrikethrough.length] = newTextStrikethrough;
+        this.textStrikethrough = newArr;
+        return this;
+    }
+
+    public PrinterTextParser dropLastTextStrikethrough() {
+        if (this.textStrikethrough.length > 1) {
+            boolean[] newArr = new boolean[this.textStrikethrough.length - 1];
+            System.arraycopy(this.textStrikethrough, 0, newArr, 0, newArr.length);
+            this.textStrikethrough = newArr;
+        }
+        return this;
+    }
+
+    /**
+     * Apply strikethrough effect to text using Unicode combining character.
+     * Each character gets a combining long stroke overlay (U+0336).
+     *
+     * @param text Original text
+     * @return Text with strikethrough effect
+     */
+    public static String applyStrikethrough(String text) {
+        StringBuilder result = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            result.append(c);
+            result.append('\u0336'); // COMBINING LONG STROKE OVERLAY
+        }
+        return result.toString();
+    }
+
     public PrinterTextParserLine[] parse() throws EscPosParserException, EscPosBarcodeException, EscPosEncodingException {
         String[] stringLines = this.text.split("\n|\r\n");
         PrinterTextParserLine[] lines = new PrinterTextParserLine[stringLines.length];

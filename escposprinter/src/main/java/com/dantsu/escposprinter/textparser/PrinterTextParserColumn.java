@@ -123,6 +123,9 @@ public class PrinterTextParserColumn {
                                 textParser.dropLastTextUnderline();
                                 textParser.dropLastTextDoubleStrike();
                                 break;
+                            case PrinterTextParser.TAGS_FORMAT_TEXT_STRIKETHROUGH:
+                                textParser.dropLastTextStrikethrough();
+                                break;
                             case PrinterTextParser.TAGS_FORMAT_TEXT_FONT:
                                 textParser.dropLastTextSize();
                                 textParser.dropLastTextColor();
@@ -133,6 +136,9 @@ public class PrinterTextParserColumn {
                         switch (textParserTag.getTagName()) {
                             case PrinterTextParser.TAGS_FORMAT_TEXT_BOLD:
                                 textParser.addTextBold(EscPosPrinterCommands.TEXT_WEIGHT_BOLD);
+                                break;
+                            case PrinterTextParser.TAGS_FORMAT_TEXT_STRIKETHROUGH:
+                                textParser.addTextStrikethrough(true);
                                 break;
                             case PrinterTextParser.TAGS_FORMAT_TEXT_UNDERLINE:
                                 if (textParserTag.hasAttribute(PrinterTextParser.ATTR_FORMAT_TEXT_UNDERLINE_TYPE)) {
@@ -298,6 +304,10 @@ public class PrinterTextParserColumn {
 
     private PrinterTextParserColumn appendString(String text) {
         PrinterTextParser textParser = this.textParserLine.getTextParser();
+        // Apply strikethrough effect if enabled
+        if (textParser.getLastTextStrikethrough()) {
+            text = PrinterTextParser.applyStrikethrough(text);
+        }
         return this.appendString(text, textParser.getLastTextSize(), textParser.getLastTextColor(), textParser.getLastTextReverseColor(), textParser.getLastTextBold(), textParser.getLastTextUnderline(), textParser.getLastTextDoubleStrike());
     }
 
