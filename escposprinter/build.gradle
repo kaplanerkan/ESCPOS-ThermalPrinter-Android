@@ -32,6 +32,12 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -50,15 +56,20 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
+                from components.release
                 groupId = 'com.github.kaplanerkan'
                 artifactId = 'ESCPOS-ThermalPrinter-Android'
                 version = libraryVersionName
                 pom {
                     name = 'Android library for ESC/POS Thermal Printer'
                     description = 'Useful library to help Android developers to print with (Bluetooth, TCP, USB) ESC/POS thermal printers.'
-                }
-                afterEvaluate {
-                    from components.release
+                    url = 'https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
                 }
             }
         }
