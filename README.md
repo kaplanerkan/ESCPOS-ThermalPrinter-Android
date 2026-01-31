@@ -28,6 +28,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
   - [USB code example](#usb-code-example)
 - [Charset encoding](#charset-encoding)
 - [Formatted text : syntax guide](#formatted-text--syntax-guide)
+- [ESC/POS Commands Reference](#escpos-commands-reference)
 - [Class list](#class-list)
   - [BluetoothPrintersConnections](#user-content-class--comdantsuescposprinterconnectionbluetoothbluetoothprintersconnections)
   - [UsbPrintersConnections](#user-content-class--comdantsuescposprinterconnectionusbusbprintersconnections)
@@ -402,6 +403,183 @@ Prints a QR code with a width and height of 25 millimeters.
 - `<qrcode>` must be directly preceded by nothing or an alignment tag (`[L][C][R]`).
 - `</qrcode>` must be directly followed by a new line `\n`.
 - You can't write text on a line that contains `<qrcode></qrcode>`.
+
+## ESC/POS Commands Reference
+
+This section provides a quick reference for ESC/POS commands used by thermal printers.
+
+### Basic Control Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Initialize Printer | `1B 40` | Reset printer to default settings |
+| Line Feed | `0A` | Advance paper one line |
+| Carriage Return | `0D` | Return cursor to start position |
+| Form Feed | `0C` | Eject current page |
+| Horizontal Tab | `09` | Move cursor to next tab stop |
+| Cancel Line | `18` | Clear the active line |
+
+### Text Formatting Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Select Font A | `1B 50` | Standard font |
+| Select Font B | `1B 54` | Smaller font |
+| Select Print Mode | `1B 21` | Configure character width/height |
+| Emphasis On | `1B 45 01` | Bold text on |
+| Emphasis Off | `1B 45 00` | Bold text off |
+| Underline On | `1B 2D 01` | Single underline |
+| Underline Double | `1B 2D 02` | Double underline |
+| Underline Off | `1B 2D 00` | Underline off |
+| Italics On | `1B 34 01` | Italic text on |
+| Italics Off | `1B 34 00` | Italic text off |
+| Double Strike On | `1B 47 01` | Double strike on |
+| Double Strike Off | `1B 47 00` | Double strike off |
+
+### Text Size Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Normal Size | `1D 21 00` | Normal width and height |
+| Double Width | `1D 21 10` | 2x width |
+| Double Height | `1D 21 01` | 2x height |
+| Double Width+Height | `1D 21 11` | 2x width and height |
+| 3x Size | `1D 21 22` | 3x width and height |
+| 4x Size | `1D 21 33` | 4x width and height |
+
+### Text Alignment Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Align Left | `1B 61 00` | Left justification |
+| Align Center | `1B 61 01` | Center justification |
+| Align Right | `1B 61 02` | Right justification |
+
+### Text Color Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Black Text | `1B 72 00` | Standard black text |
+| Red Text | `1B 72 01` | Red text (if supported) |
+
+### Image Printing Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Raster Bit Image | `1D 76 30` | Print bitmap image (GS v 0) |
+| Bit Image Mode | `1B 2A` | Print image (ESC *) |
+
+**GS v 0 Command Structure:**
+```
+1D 76 30 m xL xH yL yH [image data]
+```
+- `m`: Mode (0=normal, 1=double width, 2=double height, 3=quadruple)
+- `xL xH`: Horizontal bytes (little-endian)
+- `yL yH`: Vertical dots (little-endian)
+
+### Barcode Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Print Barcode | `1D 6B` | Generate 1D barcode |
+| Set Barcode Height | `1D 68 n` | Set height (n dots) |
+| Set Barcode Width | `1D 77 n` | Set width (2-6) |
+| Set HRI Position | `1D 48 n` | Text position (0=none, 1=above, 2=below, 3=both) |
+| Set HRI Font | `1D 66 n` | HRI font (0=A, 1=B) |
+
+**Barcode Types (for `1D 6B m`):**
+
+| Type | Code (m) | Data Length |
+|------|----------|-------------|
+| UPC-A | 0 or 65 | 11-12 digits |
+| UPC-E | 1 or 66 | 6-8 digits |
+| EAN13 | 2 or 67 | 12-13 digits |
+| EAN8 | 3 or 68 | 7-8 digits |
+| CODE39 | 4 or 69 | Variable |
+| ITF | 5 or 70 | Variable (even) |
+| CODABAR | 6 or 71 | Variable |
+| CODE93 | 72 | Variable |
+| CODE128 | 73 | Variable |
+
+### QR Code Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| QR Code Function | `1D 28 6B` | 2D barcode commands |
+
+**QR Code Command Structure:**
+```
+1D 28 6B pL pH cn fn [parameters]
+```
+- `pL pH`: Parameter length (little-endian)
+- `cn`: Code type (49 = QR Code)
+- `fn`: Function code
+
+**Common QR Functions:**
+- `fn=65`: Select model
+- `fn=67`: Set size (1-16)
+- `fn=69`: Set error correction (L/M/Q/H)
+- `fn=80`: Store data
+- `fn=81`: Print stored data
+
+### Paper Cutting Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Full Cut | `1D 56 00` | Complete paper cut |
+| Partial Cut | `1D 56 01` | Partial cut (tear line) |
+| Feed and Full Cut | `1D 56 41 n` | Feed n dots then full cut |
+| Feed and Partial Cut | `1D 56 42 n` | Feed n dots then partial cut |
+
+### Cash Drawer Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Open Drawer (Pin 2) | `1B 70 00 19 FA` | Pulse to pin 2 |
+| Open Drawer (Pin 5) | `1B 70 01 19 FA` | Pulse to pin 5 |
+
+### Paper Feed Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Feed n Lines | `1B 64 n` | Feed n lines |
+| Feed n Dots | `1B 4A n` | Feed n dots |
+| Set Line Spacing | `1B 33 n` | Set line spacing to n dots |
+| Default Line Spacing | `1B 32` | Reset to default spacing |
+
+### Character Set Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Select Charset | `1B 74 n` | Select character table n |
+| Select Code Page | `1B 52 n` | Select international charset |
+
+**Common Charset IDs:**
+
+| ID | Charset |
+|----|---------|
+| 0 | PC437 (USA) |
+| 1 | Katakana |
+| 2 | PC850 (Multilingual) |
+| 3 | PC860 (Portuguese) |
+| 4 | PC863 (Canadian-French) |
+| 5 | PC865 (Nordic) |
+| 6 | Windows-1252 (Latin-1) |
+| 16 | Windows-1252 |
+| 19 | PC858 (Euro) |
+
+### Status Commands
+
+| Command | Hex Code | Description |
+|---------|----------|-------------|
+| Real-time Status | `10 04 n` | Query printer status |
+| Printer ID | `1D 49 n` | Get printer info |
+
+### References
+
+- [Epson ESC/POS Command Reference](https://download4.epson.biz/sec_pubs/pos/reference_en/escpos/index.html)
+- [Pyramid ESC/POS Documentation](https://escpos.readthedocs.io/en/latest/commands.html)
+- [Star Micronics ESC/POS Specification](https://www.starmicronics.com/support/Mannualfolder/escpos_cm_en.pdf)
 
 ## Class list
 
