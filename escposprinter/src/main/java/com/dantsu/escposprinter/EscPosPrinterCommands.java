@@ -82,6 +82,7 @@ public class EscPosPrinterCommands {
     private DeviceConnection printerConnection;
     private EscPosCharsetEncoding charsetEncoding;
     private boolean useEscAsteriskCommand;
+    private boolean cashBoxEnabled = true;
 
 
     public static byte[] initGSv0Command(int bytesByLine, int bitmapHeight) {
@@ -839,16 +840,51 @@ public class EscPosPrinterCommands {
     }
 
     /**
-     * Open the cash box
+     * Enable or disable the cash box opening functionality.
+     * When disabled, openCashBox() calls will be ignored.
+     *
+     * @param enabled true to enable cash box (default), false to disable
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setCashBoxEnabled(boolean enabled) {
+        this.cashBoxEnabled = enabled;
+        return this;
+    }
+
+    /**
+     * Check if cash box is enabled.
+     *
+     * @return true if cash box is enabled
+     */
+    public boolean isCashBoxEnabled() {
+        return this.cashBoxEnabled;
+    }
+
+    /**
+     * Open the cash box using pin 2 (default).
      *
      * @return Fluent interface
      */
     public EscPosPrinterCommands openCashBox() throws EscPosConnectionException {
-        if (!this.printerConnection.isConnected()) {
+        return this.openCashBox(0);
+    }
+
+    /**
+     * Open the cash box using specified pin.
+     *
+     * @param pin Pin connector (0 = pin 2, 1 = pin 5)
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands openCashBox(int pin) throws EscPosConnectionException {
+        if (!this.cashBoxEnabled || !this.printerConnection.isConnected()) {
             return this;
         }
 
-        this.printerConnection.write(new byte[]{0x1B, 0x70, 0x00, 0x3C, (byte) 0xFF});
+        // ESC p m t1 t2 - Generate pulse
+        // m = 0: pin 2, m = 1: pin 5
+        // t1 = on time (t1 * 2ms), t2 = off time (t2 * 2ms)
+        byte pinByte = (byte) (pin == 1 ? 1 : 0);
+        this.printerConnection.write(new byte[]{0x1B, 0x70, pinByte, 0x3C, (byte) 0xFF});
         this.printerConnection.send(100);
         return this;
     }

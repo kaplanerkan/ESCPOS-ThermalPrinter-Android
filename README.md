@@ -27,6 +27,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
   - [USB permission](#usb-permission)
   - [USB code example](#usb-code-example)
 - [Raw ESC/POS Commands](#raw-escpos-commands)
+- [Cash Drawer Control](#cash-drawer-control)
 - [Charset encoding](#charset-encoding)
   - [Special Characters](#special-characters--etc)
 - [Formatted text : syntax guide](#formatted-text--syntax-guide)
@@ -315,6 +316,50 @@ commands.send();
 
 ```java
 byte[] bytes = EscPosPrinterCommands.hexStringToBytes("1B 40 1B 61 01");
+```
+
+## Cash Drawer Control
+
+Many POS printers have a cash drawer (cash box) connected via RJ11/RJ12 connector. You can control it programmatically:
+
+### Basic usage
+
+```java
+// Open cash drawer after printing
+printer.printFormattedTextAndOpenCashBox("[C]RECEIPT\n[L]Total: $10.00\n", 20f);
+
+// Open cash drawer without printing
+printer.openCashBox();
+
+// Open cash drawer using pin 5 instead of pin 2
+printer.openCashBox(1);  // 0 = pin 2, 1 = pin 5
+```
+
+### Disable cash drawer
+
+You can disable the cash drawer to prevent it from opening (useful for reprints or kitchen printers):
+
+```java
+// Disable cash drawer
+printer.setCashBoxEnabled(false);
+
+// This will print but NOT open the cash drawer
+printer.printFormattedTextAndOpenCashBox("[C]KITCHEN COPY\n", 20f);
+
+// Re-enable cash drawer
+printer.setCashBoxEnabled(true);
+```
+
+### Low-level access
+
+```java
+// Using EscPosPrinterCommands directly
+EscPosPrinterCommands commands = printer.getPrinterCommands();
+commands.openCashBox();  // Opens using pin 2
+
+// Or send raw command
+printer.printRawHex("1B 70 00 19 FA");  // ESC p 0 25 250 (pin 2)
+printer.printRawHex("1B 70 01 19 FA");  // ESC p 1 25 250 (pin 5)
 ```
 
 ## Charset encoding
@@ -802,6 +847,38 @@ Print a formatted text, feed paper (`dotsFeedPaper` dots) and cut the paper. Rea
 Print a formatted text, feed paper (`dotsFeedPaper` dots), cut the paper and open the cash box. Read the ["Formatted Text : Syntax guide" section](#formatted-text--syntax-guide) for more information about text formatting options.
 - **param** `String text` : Formatted text to be printed.
 - **param** `int dotsFeedPaper` : Distance feed paper at the end.
+- **return** `Printer` : Fluent interface
+
+#### Method : `setCashBoxEnabled(boolean enabled)`
+Enable or disable the cash box opening functionality. When disabled, `openCashBox()` calls will be ignored. Use this to prevent the cash box from opening during certain print operations.
+- **param** `boolean enabled` : `true` to enable cash box (default), `false` to disable
+- **return** `Printer` : Fluent interface
+
+#### Method : `openCashBox()`
+Open the cash box using pin 2 (default).
+- **return** `Printer` : Fluent interface
+
+#### Method : `openCashBox(int pin)`
+Open the cash box using the specified pin connector.
+- **param** `int pin` : Pin connector (`0` = pin 2, `1` = pin 5)
+- **return** `Printer` : Fluent interface
+
+#### Method : `cutPaper()`
+Cut the paper with default feed (65 dots ~ 8mm).
+- **return** `Printer` : Fluent interface
+
+#### Method : `cutPaper(int feedDots)`
+Cut the paper with specified feed before cutting.
+- **param** `int feedDots` : Number of dots to feed before cutting (0-255)
+- **return** `Printer` : Fluent interface
+
+#### Method : `fullCutPaper()`
+Full cut the paper with default feed (65 dots ~ 8mm).
+- **return** `Printer` : Fluent interface
+
+#### Method : `fullCutPaper(int feedDots)`
+Full cut the paper with specified feed before cutting.
+- **param** `int feedDots` : Number of dots to feed before cutting (0-255)
 - **return** `Printer` : Fluent interface
 
 #### Method : `bitmapToBytes(Bitmap bitmap, boolean gradient)`

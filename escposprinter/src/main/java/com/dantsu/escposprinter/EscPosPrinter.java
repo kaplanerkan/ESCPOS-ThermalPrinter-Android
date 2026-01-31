@@ -364,4 +364,44 @@ public class EscPosPrinter extends EscPosPrinterSize {
         }
         return this;
     }
+
+    /**
+     * Enable or disable the cash box opening functionality.
+     * When disabled, openCashBox() calls will be ignored.
+     * Use this to prevent cash box from opening during printing.
+     *
+     * @param enabled true to enable cash box (default), false to disable
+     * @return Fluent interface
+     */
+    public EscPosPrinter setCashBoxEnabled(boolean enabled) {
+        if (this.printer != null) {
+            this.printer.setCashBoxEnabled(enabled);
+        }
+        return this;
+    }
+
+    /**
+     * Open the cash box using pin 2 (default).
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinter openCashBox() throws EscPosConnectionException {
+        if (this.printer != null) {
+            this.printer.openCashBox();
+        }
+        return this;
+    }
+
+    /**
+     * Open the cash box using specified pin.
+     *
+     * @param pin Pin connector (0 = pin 2, 1 = pin 5)
+     * @return Fluent interface
+     */
+    public EscPosPrinter openCashBox(int pin) throws EscPosConnectionException {
+        if (this.printer != null) {
+            this.printer.openCashBox(pin);
+        }
+        return this;
+    }
 }
