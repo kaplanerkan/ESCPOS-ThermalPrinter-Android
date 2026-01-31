@@ -17,6 +17,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 - [What's New in v3.4.0](#whats-new-in-v340)
 - [Tested printers](#tested-printers)
 - [Test It !](#test-it-)
+- [Settings & Test Activity](#settings--test-activity)
 - [Installation](#installation)
 - [Bluetooth](#bluetooth)
   - [Bluetooth permission](#bluetooth-permission)
@@ -96,6 +97,89 @@ To test this library, it's pretty simple !
 - Run `git clone https://github.com/DantSu/ESCPOS-ThermalPrinter-Android.git .`
 - Open the directory with Android Studio
 - Test it !
+
+## Settings & Test Activity
+
+The sample app includes a comprehensive Settings & Test Activity that allows you to test all library features live on a real printer without writing any code.
+
+### Features
+
+Access it by clicking the "Settings & Test" button in the main activity.
+
+**Connection Management:**
+- Bluetooth printer selection and connection
+- USB printer auto-detection
+- TCP/IP connection with configurable IP and port
+- Real-time connection status display
+
+**Printer Configuration:**
+- DPI setting (default: 203)
+- Paper width in mm (default: 48)
+- Characters per line (default: 32)
+
+**Print Tests:**
+- Paper cut control (partial/full) with adjustable feed
+- Cash drawer control (enable/disable, pin selection)
+- Line spacing adjustment with live preview
+- Image processing delay configuration
+- ESC * command mode toggle
+
+**Text Formatting Tests:**
+- Text alignment (Left, Center, Right)
+- Font size selection (Normal, Tall, Wide, Big)
+- Font type selection (A, B, C, D, E)
+- Bold and underline toggles
+- Custom text input for testing
+
+**Barcode & QR Code Tests:**
+- Barcode printing with type selection (EAN13, EAN8, UPCA, UPCE, CODE128, etc.)
+- QR Code printing with configurable size
+- Custom data input for both
+
+**Printer Status:**
+- Query printer status (online, paper, cover, drawer, errors)
+- Real-time status display
+
+**Raw Commands:**
+- Send raw ESC/POS commands in hex format
+- Useful for testing custom commands
+
+**Full Test Print:**
+- One-click comprehensive test that prints:
+  - All alignment options
+  - All font sizes
+  - Text styles (bold, underline)
+  - Special characters (< > etc.)
+  - Sample barcode and QR code
+
+### Using the Settings Activity in Your App
+
+To include the Settings Activity in your own app:
+
+1. Enable ViewBinding in your app's `build.gradle`:
+```gradle
+android {
+    buildFeatures {
+        viewBinding true
+    }
+}
+```
+
+2. Copy the activity files:
+   - `res/layout/activity_settings.xml`
+   - `java/.../SettingsActivity.java`
+
+3. Add to `AndroidManifest.xml`:
+```xml
+<activity
+    android:name=".SettingsActivity"
+    android:label="Settings &amp; Test" />
+```
+
+4. Launch from your app:
+```java
+startActivity(new Intent(this, SettingsActivity.class));
+```
 
 ## Installation
 

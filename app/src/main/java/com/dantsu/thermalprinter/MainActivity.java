@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(view -> printUsb());
         button = (Button) this.findViewById(R.id.button_tcp);
         button.setOnClickListener(view -> printTcp());
+        button = (Button) this.findViewById(R.id.button_settings);
+        button.setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
 
     }
 
