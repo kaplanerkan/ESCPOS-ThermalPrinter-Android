@@ -310,7 +310,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void applyPrinterSettings() throws EscPosConnectionException {
         if (printer == null) return;
 
-        EscPosPrinterCommands commands = printer.getPrinterConnection();
+        EscPosPrinterCommands commands = printer.getPrinterCommands();
 
         // Apply line spacing
         int lineSpacing = binding.seekLineSpacing.getProgress();
@@ -321,7 +321,7 @@ public class SettingsActivity extends AppCompatActivity {
         commands.setImageProcessingDelay(imageDelay);
 
         // Apply ESC * mode
-        commands.setUseEscAsteriskCommand(binding.chkUseEscAsterisk.isChecked());
+        commands.useEscAsteriskCommand(binding.chkUseEscAsterisk.isChecked());
 
         // Apply cash box setting
         commands.setCashBoxEnabled(binding.chkCashBoxEnabled.isChecked());
@@ -332,23 +332,23 @@ public class SettingsActivity extends AppCompatActivity {
         binding.btnPartialCut.setOnClickListener(v -> executePrinterCommand(() -> {
             if (printer != null) {
                 int feed = binding.seekCutFeed.getProgress();
-                printer.getPrinterConnection().cutPaper(feed);
+                printer.getPrinterCommands().cutPaper(feed);
             }
         }));
 
         binding.btnFullCut.setOnClickListener(v -> executePrinterCommand(() -> {
             if (printer != null) {
                 int feed = binding.seekCutFeed.getProgress();
-                printer.getPrinterConnection().feedPaper(feed);
-                printer.getPrinterConnection().cutPaper();
+                printer.getPrinterCommands().feedPaper(feed);
+                printer.getPrinterCommands().cutPaper();
             }
         }));
 
         // Cash Box button
         binding.btnOpenCashBox.setOnClickListener(v -> executePrinterCommand(() -> {
             if (printer != null) {
-                int pin = binding.spinnerCashBoxPin.getSelectedItemPosition() == 0 ?
-                    EscPosPrinterCommands.CASH_BOX_PIN_2 : EscPosPrinterCommands.CASH_BOX_PIN_5;
+                // 0 = pin 2, 1 = pin 5
+                int pin = binding.spinnerCashBoxPin.getSelectedItemPosition();
                 printer.openCashBox(pin);
             }
         }));
@@ -539,7 +539,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             if (bytes != null) {
                 try {
-                    printer.getPrinterConnection().write(bytes);
+                    printer.getPrinterCommands().printRaw(bytes);
                     mainHandler.post(() -> showToast("Raw command sent"));
                 } catch (Exception e) {
                     mainHandler.post(() -> showToast("Error: " + e.getMessage()));
