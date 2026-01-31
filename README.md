@@ -1,7 +1,7 @@
-[![Jitpack package repository - ESCPOS-ThermalPrinter-Android v3.3.0](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0)
-[![](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android/month.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0)
-[![](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android/week.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0)
+[![Jitpack package repository - ESCPOS-ThermalPrinter-Android v3.4.0](https://jitpack.io/v/kaplanerkan/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#kaplanerkan/ESCPOS-ThermalPrinter-Android/3.4.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> **Fork Note:** This is a maintained fork of [DantSu/ESCPOS-ThermalPrinter-Android](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android) with Android 14+ compatibility, updated dependencies, and bug fixes.
 
 # Android library for ESC/POS Thermal Printer
 
@@ -41,7 +41,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 
 ## Android version
 
-Developed for SDK version 16 (Android 4.1 Jelly Bean) and above.
+Developed for SDK version 24 (Android 7.0 Nougat) and above. Supports up to Android 14 (API 34).
 
 
 ## Tested printers
@@ -63,7 +63,7 @@ To test this library, it's pretty simple !
 
 ## Installation
 
-**Step 1.** Add the [JitPack](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
+**Step 1.** Add the [JitPack](https://jitpack.io/#kaplanerkan/ESCPOS-ThermalPrinter-Android/3.4.0) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
 
 ```
 allprojects {
@@ -79,7 +79,7 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.3.0'
+    implementation 'com.github.kaplanerkan:ESCPOS-ThermalPrinter-Android:3.4.0'
 }
 ```
 
@@ -235,7 +235,11 @@ public void printUsb() {
             android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0
         );
         IntentFilter filter = new IntentFilter(MainActivity.ACTION_USB_PERMISSION);
-        registerReceiver(this.usbReceiver, filter);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(this.usbReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(this.usbReceiver, filter);
+        }
         usbManager.requestPermission(usbConnection.getDevice(), permissionIntent);
     }
 }

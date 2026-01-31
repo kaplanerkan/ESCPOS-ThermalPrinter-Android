@@ -22,18 +22,18 @@ public class TcpConnection extends DeviceConnection {
      * @param port    Port of the device
      */
     public TcpConnection(String address, int port) {
-        this(address, port, 30);
+        this(address, port, 5000);
     }
 
     /**
      * Create un instance of TcpConnection.
-     * 
+     *
      * Overload of the above function TcpConnection()
      * Include timeout parameter in milliseconds.
      *
      * @param address IP address of the device
      * @param port    Port of the device
-     * @param timeout Timeout in milliseconds to establish a connection
+     * @param timeout Timeout in milliseconds to establish a connection (default: 5000ms)
      */
     public TcpConnection(String address, int port, int timeout) {
         super();

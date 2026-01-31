@@ -16,6 +16,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -215,7 +216,11 @@ public class MainActivity extends AppCompatActivity {
             android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0
         );
         IntentFilter filter = new IntentFilter(MainActivity.ACTION_USB_PERMISSION);
-        registerReceiver(this.usbReceiver, filter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(this.usbReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(this.usbReceiver, filter);
+        }
         usbManager.requestPermission(usbConnection.getDevice(), permissionIntent);
     }
 
