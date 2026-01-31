@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.dantsu.escposprinter.EscPosPrinter;
 import com.karsu.thermalprinter.R;
+import com.karsu.thermalprinter.helpers.PrinterSettings;
 
 import java.util.concurrent.ExecutorService;
 
@@ -45,6 +46,7 @@ public class TextFormattingDialog {
     private final EscPosPrinter printer;
     private final ExecutorService executor;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final float feedPaperMm;
 
     // Text formatting state
     private String currentAlignment = "L";
@@ -57,6 +59,7 @@ public class TextFormattingDialog {
         this.context = context;
         this.printer = printer;
         this.executor = executor;
+        this.feedPaperMm = new PrinterSettings(context).getFeedPaperMm();
     }
 
     // Setters for loading saved settings
@@ -165,7 +168,7 @@ public class TextFormattingDialog {
             String formattedText = buildFormattedText(text);
 
             try {
-                printer.printFormattedTextAndCut(formattedText);
+                printer.printFormattedTextAndCut(formattedText, feedPaperMm);
             } catch (Exception e) {
                 showToast("Print error: " + e.getMessage());
             }

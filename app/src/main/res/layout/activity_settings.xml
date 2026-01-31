@@ -191,6 +191,25 @@
             android:layout_height="wrap_content"
             android:text="32"
             android:inputType="number"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  Feed:"
+            android:gravity="center_vertical"/>
+
+        <EditText
+            android:id="@+id/editFeedPaper"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="20"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mm"
+            android:gravity="center_vertical"/>
     </LinearLayout>
 
     <Button

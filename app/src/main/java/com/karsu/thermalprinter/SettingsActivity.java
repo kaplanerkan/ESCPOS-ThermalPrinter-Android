@@ -67,6 +67,7 @@ import com.karsu.thermalprinter.dialogs.PaperCashBoxDialog;
 import com.karsu.thermalprinter.dialogs.PrinterStatusDialog;
 import com.karsu.thermalprinter.dialogs.RawCommandsDialog;
 import com.karsu.thermalprinter.dialogs.TextFormattingDialog;
+import com.karsu.thermalprinter.helpers.PrinterSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,9 @@ public class SettingsActivity extends AppCompatActivity {
     private PaperCashBoxDialog paperCashBoxDialog;
     private TextFormattingDialog textFormattingDialog;
 
+    // Printer settings helper
+    private PrinterSettings printerSettings;
+
     private static final String ACTION_USB_PERMISSION = "com.karsu.thermalprinter.USB_PERMISSION";
 
     // Bluetooth permissions
@@ -111,8 +115,38 @@ public class SettingsActivity extends AppCompatActivity {
         // Enable fullscreen immersive mode (must be after setContentView)
         enableFullscreen();
 
+        // Initialize printer settings
+        printerSettings = new PrinterSettings(this);
+        loadPrinterSettings();
+
         setupConnectionSection();
         setupCategoryButtons();
+    }
+
+    private void loadPrinterSettings() {
+        binding.editDpi.setText(String.valueOf(printerSettings.getDpi()));
+        binding.editWidthMm.setText(String.valueOf(printerSettings.getWidthMm()));
+        binding.editCharsPerLine.setText(String.valueOf(printerSettings.getCharsPerLine()));
+        binding.editFeedPaper.setText(String.valueOf(printerSettings.getFeedPaperMm()));
+    }
+
+    private void savePrinterSettings() {
+        try {
+            printerSettings.setDpi(Integer.parseInt(binding.editDpi.getText().toString()));
+            printerSettings.setWidthMm(Float.parseFloat(binding.editWidthMm.getText().toString()));
+            printerSettings.setCharsPerLine(Integer.parseInt(binding.editCharsPerLine.getText().toString()));
+            printerSettings.setFeedPaperMm(Float.parseFloat(binding.editFeedPaper.getText().toString()));
+        } catch (NumberFormatException e) {
+            // Ignore invalid values
+        }
+    }
+
+    public float getFeedPaperMm() {
+        try {
+            return Float.parseFloat(binding.editFeedPaper.getText().toString());
+        } catch (NumberFormatException e) {
+            return 20f;
+        }
     }
 
     @Override
@@ -310,6 +344,9 @@ public class SettingsActivity extends AppCompatActivity {
                 int dpi = Integer.parseInt(binding.editDpi.getText().toString());
                 float widthMm = Float.parseFloat(binding.editWidthMm.getText().toString());
                 int charsPerLine = Integer.parseInt(binding.editCharsPerLine.getText().toString());
+
+                // Save settings
+                mainHandler.post(this::savePrinterSettings);
 
                 if (binding.radioBluetooth.isChecked()) {
                     if (selectedBluetoothDevice == null) {

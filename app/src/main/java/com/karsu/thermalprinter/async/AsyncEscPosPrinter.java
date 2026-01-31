@@ -27,10 +27,26 @@ public class AsyncEscPosPrinter extends EscPosPrinterSize {
 
     private DeviceConnection printerConnection;
     private String[] textsToPrint = new String[0];
+    private float feedPaperMm = 20f;
 
     public AsyncEscPosPrinter(DeviceConnection printerConnection, int printerDpi, float printerWidthMM, int printerNbrCharactersPerLine) {
         super(printerDpi, printerWidthMM, printerNbrCharactersPerLine);
         this.printerConnection = printerConnection;
+    }
+
+    /**
+     * Get feed paper distance in mm.
+     */
+    public float getFeedPaperMm() {
+        return this.feedPaperMm;
+    }
+
+    /**
+     * Set feed paper distance in mm (fluent API).
+     */
+    public AsyncEscPosPrinter setFeedPaperMm(float mm) {
+        this.feedPaperMm = mm;
+        return this;
     }
 
     /**

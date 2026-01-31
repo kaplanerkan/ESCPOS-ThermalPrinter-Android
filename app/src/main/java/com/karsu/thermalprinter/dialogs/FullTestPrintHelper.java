@@ -26,6 +26,7 @@ import android.os.Looper;
 import android.widget.Toast;
 
 import com.dantsu.escposprinter.EscPosPrinter;
+import com.karsu.thermalprinter.helpers.PrinterSettings;
 
 import java.util.concurrent.ExecutorService;
 
@@ -39,11 +40,13 @@ public class FullTestPrintHelper {
     private final EscPosPrinter printer;
     private final ExecutorService executor;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final float feedPaperMm;
 
     public FullTestPrintHelper(Context context, EscPosPrinter printer, ExecutorService executor) {
         this.context = context;
         this.printer = printer;
         this.executor = executor;
+        this.feedPaperMm = new PrinterSettings(context).getFeedPaperMm();
     }
 
     public void execute() {
@@ -88,7 +91,7 @@ public class FullTestPrintHelper {
                         "[C]Test completed!\n" +
                         "[L]\n";
 
-                printer.printFormattedTextAndCut(testPrint);
+                printer.printFormattedTextAndCut(testPrint, feedPaperMm);
                 showToast("Full test print completed");
             } catch (Exception e) {
                 showToast("Print error: " + e.getMessage());

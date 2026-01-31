@@ -143,8 +143,9 @@ public class AsyncEscPosPrint {
             updateProgress(PROGRESS_PRINTING);
 
             String[] textsToPrint = printerData.getTextsToPrint();
+            float feedMm = printerData.getFeedPaperMm();
             for (String text : textsToPrint) {
-                printer.printFormattedTextAndCut(text);
+                printer.printFormattedTextAndCut(text, feedMm);
                 Thread.sleep(500);
             }
 

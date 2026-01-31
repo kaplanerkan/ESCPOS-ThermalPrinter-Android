@@ -37,15 +37,23 @@ import java.util.Date;
 public class PrintContentHelper {
 
     private final Context context;
+    private final PrinterSettings printerSettings;
 
     public PrintContentHelper(Context context) {
         this.context = context;
+        this.printerSettings = new PrinterSettings(context);
     }
 
     @SuppressLint("SimpleDateFormat")
     public AsyncEscPosPrinter createTestPrinter(DeviceConnection connection) {
         SimpleDateFormat format = new SimpleDateFormat("'on' yyyy-MM-dd 'at' HH:mm:ss");
-        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(connection, 203, 48f, 32);
+        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(
+                connection,
+                printerSettings.getDpi(),
+                printerSettings.getWidthMm(),
+                printerSettings.getCharsPerLine()
+        );
+        printer.setFeedPaperMm(printerSettings.getFeedPaperMm());
 
         Drawable logoDrawable = ResourcesCompat.getDrawableForDensity(
                 context.getResources(), R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM, context.getTheme()

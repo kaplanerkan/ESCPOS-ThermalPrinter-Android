@@ -81,8 +81,9 @@ public class AsyncTcpEscPosPrint extends AsyncEscPosPrint {
             updateProgress(PROGRESS_PRINTING);
 
             String[] textsToPrint = printerData.getTextsToPrint();
+            float feedMm = printerData.getFeedPaperMm();
             for (String text : textsToPrint) {
-                printer.printFormattedTextAndCut(text);
+                printer.printFormattedTextAndCut(text, feedMm);
             }
 
             // Flush all buffered data at once

@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.dantsu.escposprinter.EscPosPrinter;
 import com.karsu.thermalprinter.R;
+import com.karsu.thermalprinter.helpers.PrinterSettings;
 
 import java.util.concurrent.ExecutorService;
 
@@ -43,11 +44,13 @@ public class BarcodeQrDialog {
     private final EscPosPrinter printer;
     private final ExecutorService executor;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final float feedPaperMm;
 
     public BarcodeQrDialog(Context context, EscPosPrinter printer, ExecutorService executor) {
         this.context = context;
         this.printer = printer;
         this.executor = executor;
+        this.feedPaperMm = new PrinterSettings(context).getFeedPaperMm();
     }
 
     public void show() {
@@ -75,7 +78,7 @@ public class BarcodeQrDialog {
 
             try {
                 String barcodeText = "[C]<barcode type='" + type + "' height='10'>" + data + "</barcode>\n";
-                printer.printFormattedTextAndCut(barcodeText);
+                printer.printFormattedTextAndCut(barcodeText, feedPaperMm);
             } catch (Exception e) {
                 showToast("Barcode error: " + e.getMessage());
             }
@@ -88,7 +91,7 @@ public class BarcodeQrDialog {
 
             try {
                 String qrText = "[C]<qrcode size='" + size + "'>" + data + "</qrcode>\n";
-                printer.printFormattedTextAndCut(qrText);
+                printer.printFormattedTextAndCut(qrText, feedPaperMm);
             } catch (Exception e) {
                 showToast("QR code error: " + e.getMessage());
             }
