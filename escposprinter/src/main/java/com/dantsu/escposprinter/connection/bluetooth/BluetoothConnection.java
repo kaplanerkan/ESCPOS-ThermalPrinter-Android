@@ -75,6 +75,7 @@ public class BluetoothConnection extends DeviceConnection {
             bluetoothAdapter.cancelDiscovery();
             this.socket.connect();
             this.outputStream = this.socket.getOutputStream();
+            this.inputStream = this.socket.getInputStream();
             this.data = new byte[0];
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,6 +105,14 @@ public class BluetoothConnection extends DeviceConnection {
      */
     public BluetoothConnection disconnect() {
         this.data = new byte[0];
+        if (this.inputStream != null) {
+            try {
+                this.inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.inputStream = null;
+        }
         if (this.outputStream != null) {
             try {
                 this.outputStream.close();

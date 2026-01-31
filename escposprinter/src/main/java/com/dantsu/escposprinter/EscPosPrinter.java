@@ -418,4 +418,55 @@ public class EscPosPrinter extends EscPosPrinterSize {
         }
         return this;
     }
+
+    /**
+     * Query printer status (online, cover, paper, errors).
+     * Note: Not all printers support status queries.
+     *
+     * @return PrinterStatus object containing status information
+     * @throws EscPosConnectionException if connection error occurs
+     */
+    public PrinterStatus queryStatus() throws EscPosConnectionException {
+        if (this.printer == null) {
+            return new PrinterStatus();
+        }
+        return this.printer.queryStatus();
+    }
+
+    /**
+     * Query printer status with custom timeout.
+     *
+     * @param timeout Timeout in milliseconds
+     * @return PrinterStatus object containing status information
+     * @throws EscPosConnectionException if connection error occurs
+     */
+    public PrinterStatus queryStatus(int timeout) throws EscPosConnectionException {
+        if (this.printer == null) {
+            return new PrinterStatus();
+        }
+        return this.printer.queryStatus(timeout);
+    }
+
+    /**
+     * Query only the paper status.
+     *
+     * @param timeout Timeout in milliseconds
+     * @return PrinterStatus object with paper status
+     * @throws EscPosConnectionException if connection error occurs
+     */
+    public PrinterStatus queryPaperStatus(int timeout) throws EscPosConnectionException {
+        if (this.printer == null) {
+            return new PrinterStatus();
+        }
+        return this.printer.queryPaperStatus(timeout);
+    }
+
+    /**
+     * Check if the printer connection supports status queries.
+     *
+     * @return true if status queries are supported
+     */
+    public boolean supportsStatusQuery() {
+        return this.printer != null && this.printer.supportsStatusQuery();
+    }
 }

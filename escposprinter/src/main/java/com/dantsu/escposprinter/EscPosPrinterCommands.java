@@ -11,6 +11,7 @@ import com.dantsu.escposprinter.connection.DeviceConnection;
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException;
 import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
 import com.dantsu.escposprinter.exceptions.EscPosEncodingException;
+import com.dantsu.escposprinter.PrinterStatus;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
@@ -1022,5 +1023,114 @@ public class EscPosPrinterCommands {
      */
     public EscPosPrinterCommands printRawHex(String hexString) throws EscPosConnectionException {
         return this.printRaw(hexStringToBytes(hexString));
+    }
+
+    // Status query constants
+    public static final byte[] STATUS_QUERY_PRINTER = new byte[]{0x10, 0x04, 0x01};  // DLE EOT 1
+    public static final byte[] STATUS_QUERY_OFFLINE = new byte[]{0x10, 0x04, 0x02};  // DLE EOT 2
+    public static final byte[] STATUS_QUERY_ERROR = new byte[]{0x10, 0x04, 0x03};    // DLE EOT 3
+    public static final byte[] STATUS_QUERY_PAPER = new byte[]{0x10, 0x04, 0x04};    // DLE EOT 4
+
+    /**
+     * Query printer status using DLE EOT command.
+     * Note: Not all printers support status queries. USB connections may not support reading.
+     *
+     * @param timeout Timeout in milliseconds to wait for response
+     * @return PrinterStatus object containing status information
+     * @throws EscPosConnectionException if connection error occurs
+     */
+    public PrinterStatus queryStatus(int timeout) throws EscPosConnectionException {
+        PrinterStatus status = new PrinterStatus();
+
+        if (!this.printerConnection.isConnected()) {
+            return status;
+        }
+
+        if (!this.printerConnection.canRead()) {
+            return status;
+        }
+
+        // Query printer status (DLE EOT 1)
+        try {
+            this.printerConnection.write(STATUS_QUERY_PRINTER);
+            this.printerConnection.send();
+            byte[] response = this.printerConnection.read(timeout);
+            status.parsePrinterStatus(response);
+        } catch (Exception e) {
+            // Continue with other queries
+        }
+
+        // Query offline status (DLE EOT 2)
+        try {
+            this.printerConnection.write(STATUS_QUERY_OFFLINE);
+            this.printerConnection.send();
+            byte[] response = this.printerConnection.read(timeout);
+            status.parseOfflineStatus(response);
+        } catch (Exception e) {
+            // Continue with other queries
+        }
+
+        // Query error status (DLE EOT 3)
+        try {
+            this.printerConnection.write(STATUS_QUERY_ERROR);
+            this.printerConnection.send();
+            byte[] response = this.printerConnection.read(timeout);
+            status.parseErrorStatus(response);
+        } catch (Exception e) {
+            // Continue with other queries
+        }
+
+        // Query paper status (DLE EOT 4)
+        try {
+            this.printerConnection.write(STATUS_QUERY_PAPER);
+            this.printerConnection.send();
+            byte[] response = this.printerConnection.read(timeout);
+            status.parsePaperStatus(response);
+        } catch (Exception e) {
+            // Ignore
+        }
+
+        return status;
+    }
+
+    /**
+     * Query printer status with default timeout (500ms).
+     *
+     * @return PrinterStatus object containing status information
+     * @throws EscPosConnectionException if connection error occurs
+     */
+    public PrinterStatus queryStatus() throws EscPosConnectionException {
+        return this.queryStatus(500);
+    }
+
+    /**
+     * Query only the paper status.
+     *
+     * @param timeout Timeout in milliseconds
+     * @return PrinterStatus object with paper status
+     * @throws EscPosConnectionException if connection error occurs
+     */
+    public PrinterStatus queryPaperStatus(int timeout) throws EscPosConnectionException {
+        PrinterStatus status = new PrinterStatus();
+
+        if (!this.printerConnection.isConnected() || !this.printerConnection.canRead()) {
+            return status;
+        }
+
+        this.printerConnection.write(STATUS_QUERY_PAPER);
+        this.printerConnection.send();
+        byte[] response = this.printerConnection.read(timeout);
+        status.parsePaperStatus(response);
+
+        return status;
+    }
+
+    /**
+     * Check if the connection supports reading (status queries).
+     *
+     * @return true if reading is supported
+     */
+    public boolean supportsStatusQuery() {
+        return this.printerConnection != null && this.printerConnection.canRead();
     }
 }

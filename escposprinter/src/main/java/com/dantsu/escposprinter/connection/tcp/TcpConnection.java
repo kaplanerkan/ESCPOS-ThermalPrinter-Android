@@ -62,6 +62,7 @@ public class TcpConnection extends DeviceConnection {
             this.socket = new Socket();
             this.socket.connect(new InetSocketAddress(InetAddress.getByName(this.address), this.port), this.timeout);
             this.outputStream = this.socket.getOutputStream();
+            this.inputStream = this.socket.getInputStream();
             this.data = new byte[0];
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,6 +77,14 @@ public class TcpConnection extends DeviceConnection {
      */
     public TcpConnection disconnect() {
         this.data = new byte[0];
+        if (this.inputStream != null) {
+            try {
+                this.inputStream.close();
+                this.inputStream = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         if (this.outputStream != null) {
             try {
                 this.outputStream.close();

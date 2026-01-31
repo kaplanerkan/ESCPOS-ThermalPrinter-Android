@@ -28,6 +28,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
   - [USB code example](#usb-code-example)
 - [Raw ESC/POS Commands](#raw-escpos-commands)
 - [Cash Drawer Control](#cash-drawer-control)
+- [Printer Status](#printer-status)
 - [Charset encoding](#charset-encoding)
   - [Special Characters](#special-characters--etc)
 - [Formatted text : syntax guide](#formatted-text--syntax-guide)
@@ -360,6 +361,107 @@ commands.openCashBox();  // Opens using pin 2
 // Or send raw command
 printer.printRawHex("1B 70 00 19 FA");  // ESC p 0 25 250 (pin 2)
 printer.printRawHex("1B 70 01 19 FA");  // ESC p 1 25 250 (pin 5)
+```
+
+## Printer Status
+
+You can query the printer status to check for errors, paper status, and more. This is useful for remote monitoring of printers.
+
+**Note:** Not all printers support status queries. USB connections typically don't support reading. Bluetooth and TCP connections usually support it.
+
+### Basic usage
+
+```java
+// Check if status query is supported
+if (printer.supportsStatusQuery()) {
+    PrinterStatus status = printer.queryStatus();
+
+    if (status.isReady()) {
+        // Printer is ready to print
+        printer.printFormattedText("[C]Hello World\n");
+    } else {
+        // Check specific issues
+        if (status.isPaperEnd()) {
+            Log.e("Printer", "Out of paper!");
+        }
+        if (status.isCoverOpen()) {
+            Log.e("Printer", "Cover is open!");
+        }
+        if (status.isErrorOccurred()) {
+            Log.e("Printer", "Printer error occurred");
+        }
+    }
+}
+```
+
+### Available status checks
+
+```java
+PrinterStatus status = printer.queryStatus();
+
+// General status
+status.isOnline();           // Printer is online
+status.isReady();            // Ready to print (no errors, has paper)
+
+// Cover and drawer
+status.isCoverOpen();        // Printer cover is open
+status.isDrawerOpen();       // Cash drawer is open
+
+// Paper status
+status.isPaperNearEnd();     // Paper roll is running low
+status.isPaperEnd();         // No paper
+status.isPaperEndError();    // Paper end caused an error
+
+// Error status
+status.isErrorOccurred();    // Any error occurred
+status.isRecoverableError(); // Error that can be recovered
+status.isUnrecoverableError(); // Serious error
+status.isAutocutterError();  // Cutter jam or error
+status.isAutoRecoverableError(); // Will auto-recover
+
+// Check if query succeeded
+status.hasAnyStatus();       // At least one query succeeded
+status.isPaperStatusQueried(); // Paper status was queried
+```
+
+### Query with custom timeout
+
+```java
+// Default timeout is 500ms
+PrinterStatus status = printer.queryStatus();
+
+// Custom timeout (e.g., 1000ms for slow connections)
+PrinterStatus status = printer.queryStatus(1000);
+
+// Query only paper status (faster)
+PrinterStatus paperStatus = printer.queryPaperStatus(500);
+```
+
+### Remote monitoring example
+
+```java
+// Periodically check printer status in a background thread
+new Thread(() -> {
+    while (monitoring) {
+        try {
+            PrinterStatus status = printer.queryStatus(1000);
+
+            if (status.isPaperNearEnd()) {
+                notifyUser("Paper is running low!");
+            }
+            if (status.isPaperEnd()) {
+                notifyUser("Printer is out of paper!");
+            }
+            if (!status.isOnline()) {
+                notifyUser("Printer is offline!");
+            }
+
+            Thread.sleep(30000); // Check every 30 seconds
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}).start();
 ```
 
 ## Charset encoding
@@ -881,6 +983,24 @@ Open the cash box using pin 2 (default).
 Open the cash box using the specified pin connector.
 - **param** `int pin` : Pin connector (`0` = pin 2, `1` = pin 5)
 - **return** `Printer` : Fluent interface
+
+#### Method : `queryStatus()`
+Query printer status (online, cover, paper, errors). Not all printers support this.
+- **return** `PrinterStatus` : Status information object
+
+#### Method : `queryStatus(int timeout)`
+Query printer status with custom timeout.
+- **param** `int timeout` : Timeout in milliseconds
+- **return** `PrinterStatus` : Status information object
+
+#### Method : `queryPaperStatus(int timeout)`
+Query only paper status (faster than full query).
+- **param** `int timeout` : Timeout in milliseconds
+- **return** `PrinterStatus` : Status object with paper information
+
+#### Method : `supportsStatusQuery()`
+Check if the printer connection supports status queries.
+- **return** `boolean` : true if status queries are supported
 
 #### Method : `cutPaper()`
 Cut the paper with default feed (65 dots ~ 8mm).
