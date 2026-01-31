@@ -758,4 +758,90 @@ public class EscPosPrinterCommands {
     public EscPosCharsetEncoding getCharsetEncoding() {
         return this.charsetEncoding;
     }
+
+    /**
+     * Send raw bytes directly to the printer.
+     *
+     * @param bytes Raw bytes to send
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands printRaw(byte[] bytes) throws EscPosConnectionException {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        this.printerConnection.write(bytes);
+        this.printerConnection.send();
+        return this;
+    }
+
+    /**
+     * Write raw bytes to the buffer without sending.
+     * Use send() to flush the buffer.
+     *
+     * @param bytes Raw bytes to write
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands write(byte[] bytes) {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        this.printerConnection.write(bytes);
+        return this;
+    }
+
+    /**
+     * Send the buffer to the printer.
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands send() throws EscPosConnectionException {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        this.printerConnection.send();
+        return this;
+    }
+
+    /**
+     * Send the buffer to the printer with additional waiting time.
+     *
+     * @param addWaitingTime Additional waiting time in milliseconds
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands send(int addWaitingTime) throws EscPosConnectionException {
+        if (!this.printerConnection.isConnected()) {
+            return this;
+        }
+        this.printerConnection.send(addWaitingTime);
+        return this;
+    }
+
+    /**
+     * Convert a hexadecimal string to byte array.
+     * Example: "1B40" becomes {0x1B, 0x40}
+     *
+     * @param hexString Hexadecimal string (with or without spaces)
+     * @return byte array
+     */
+    public static byte[] hexStringToBytes(String hexString) {
+        hexString = hexString.replaceAll("\\s+", "").replaceAll("0x", "").replaceAll(",", "");
+        int len = hexString.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
+                    + Character.digit(hexString.charAt(i + 1), 16));
+        }
+        return data;
+    }
+
+    /**
+     * Send raw hexadecimal string directly to the printer.
+     * Example: "1B 40 1B 61 01" or "1B40" or "0x1B,0x40"
+     *
+     * @param hexString Hexadecimal string
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands printRawHex(String hexString) throws EscPosConnectionException {
+        return this.printRaw(hexStringToBytes(hexString));
+    }
 }

@@ -26,6 +26,7 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 - [USB](#usb)
   - [USB permission](#usb-permission)
   - [USB code example](#usb-code-example)
+- [Raw ESC/POS Commands](#raw-escpos-commands)
 - [Charset encoding](#charset-encoding)
 - [Formatted text : syntax guide](#formatted-text--syntax-guide)
 - [ESC/POS Commands Reference](#escpos-commands-reference)
@@ -282,6 +283,38 @@ printer
     );
 ```
 
+
+## Raw ESC/POS Commands
+
+You can send raw ESC/POS commands directly to the printer for advanced control:
+
+```java
+// Using byte array
+byte[] rawCommand = new byte[]{0x1B, 0x40}; // Initialize printer
+printer.printRaw(rawCommand);
+
+// Using hexadecimal string (spaces, 0x prefix, and commas are optional)
+printer.printRawHex("1B 40");           // Initialize printer
+printer.printRawHex("1B611B6101");      // Align center
+printer.printRawHex("0x1B,0x45,0x01");  // Bold on
+
+// Buffered writing (write multiple commands, then send once)
+printer.write(new byte[]{0x1B, 0x40})   // Reset
+       .write(new byte[]{0x1B, 0x61, 0x01}) // Center align
+       .send();
+
+// Access low-level commands
+EscPosPrinterCommands commands = printer.getPrinterCommands();
+commands.write(EscPosPrinterCommands.TEXT_ALIGN_CENTER);
+commands.printText("Centered Text");
+commands.send();
+```
+
+### Convert hex string to bytes
+
+```java
+byte[] bytes = EscPosPrinterCommands.hexStringToBytes("1B 40 1B 61 01");
+```
 
 ## Charset encoding
 

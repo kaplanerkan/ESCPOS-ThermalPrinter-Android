@@ -246,4 +246,72 @@ public class EscPosPrinter extends EscPosPrinterSize {
         this.printer.printCharsetEncodingCharacters(charsetId);
         return this;
     }
+
+    /**
+     * Send raw bytes directly to the printer.
+     * Useful for sending custom ESC/POS commands.
+     *
+     * @param bytes Raw bytes to send
+     * @return Fluent interface
+     */
+    public EscPosPrinter printRaw(byte[] bytes) throws EscPosConnectionException {
+        if (this.printer == null) {
+            return this;
+        }
+        this.printer.printRaw(bytes);
+        return this;
+    }
+
+    /**
+     * Send raw hexadecimal string directly to the printer.
+     * Useful for sending custom ESC/POS commands.
+     * Example: "1B 40 1B 61 01" or "1B40" or "0x1B,0x40"
+     *
+     * @param hexString Hexadecimal string
+     * @return Fluent interface
+     */
+    public EscPosPrinter printRawHex(String hexString) throws EscPosConnectionException {
+        if (this.printer == null) {
+            return this;
+        }
+        this.printer.printRawHex(hexString);
+        return this;
+    }
+
+    /**
+     * Write raw bytes to the buffer without sending.
+     * Use send() to flush the buffer.
+     *
+     * @param bytes Raw bytes to write
+     * @return Fluent interface
+     */
+    public EscPosPrinter write(byte[] bytes) {
+        if (this.printer == null) {
+            return this;
+        }
+        this.printer.write(bytes);
+        return this;
+    }
+
+    /**
+     * Send the buffer to the printer.
+     *
+     * @return Fluent interface
+     */
+    public EscPosPrinter send() throws EscPosConnectionException {
+        if (this.printer == null) {
+            return this;
+        }
+        this.printer.send();
+        return this;
+    }
+
+    /**
+     * Get the underlying EscPosPrinterCommands instance for advanced operations.
+     *
+     * @return EscPosPrinterCommands instance
+     */
+    public EscPosPrinterCommands getPrinterCommands() {
+        return this.printer;
+    }
 }
