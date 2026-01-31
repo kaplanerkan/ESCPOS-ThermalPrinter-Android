@@ -108,6 +108,7 @@ public class EscPosPrinterCommands {
 
     /**
      * Convert Bitmap instance to a byte array compatible with ESC/POS printer.
+     * Optimized version using batch pixel retrieval for better performance.
      *
      * @param bitmap Bitmap to be convert
      * @param gradient false : Black and white image, true : Grayscale image
@@ -121,6 +122,11 @@ public class EscPosPrinterCommands {
 
         byte[] imageBytes = EscPosPrinterCommands.initGSv0Command(bytesByLine, bitmapHeight);
 
+        // Optimization: Get all pixels at once instead of calling getPixel() for each pixel
+        // This significantly improves performance for large images
+        int[] pixels = new int[bitmapWidth * bitmapHeight];
+        bitmap.getPixels(pixels, 0, bitmapWidth, 0, 0, bitmapWidth, bitmapHeight);
+
         int i = 8,
             greyscaleCoefficientInit = 0,
             gradientStep = 6;
@@ -130,13 +136,15 @@ public class EscPosPrinterCommands {
 
         for (int posY = 0; posY < bitmapHeight; posY++) {
             int greyscaleCoefficient = greyscaleCoefficientInit,
-                greyscaleLine = posY % gradientStep;
+                greyscaleLine = posY % gradientStep,
+                rowOffset = posY * bitmapWidth;
             for (int j = 0; j < bitmapWidth; j += 8) {
                 int b = 0;
                 for (int k = 0; k < 8; k++) {
                     int posX = j + k;
                     if (posX < bitmapWidth) {
-                        int color = bitmap.getPixel(posX, posY),
+                        // Access pixel from array instead of calling bitmap.getPixel()
+                        int color = pixels[rowOffset + posX],
                             red = (color >> 16) & 255,
                             green = (color >> 8) & 255,
                             blue = color & 255;
