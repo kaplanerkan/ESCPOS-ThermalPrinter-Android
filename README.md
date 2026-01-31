@@ -506,6 +506,20 @@ Use `PrinterTextParserImg.bitmapToHexadecimalString` to convert `Drawable`, `Bit
 
 - `<img>`hexadecimal string of an image`</img>`
 
+#### Image Processing Delay
+
+If you experience issues with paper cutting before the image finishes printing, you can adjust the image processing delay:
+
+```java
+// Increase delay if paper cuts too early after image printing
+printer.setImageProcessingDelay(10);  // 10ms per line (default: 5ms)
+
+// For slow printers, increase further
+printer.setImageProcessingDelay(20);  // 20ms per line
+```
+
+The default delay is 5ms per line of the image. For a 200-line image, this adds 1 second of processing time after the image data is sent, ensuring the printer has time to complete printing before subsequent commands (like paper cut) are executed.
+
 **⚠ WARNING ⚠** : This tag has several constraints :
 
 - A line that contains `<img></img>` can have only one alignment tag and it must be at the beginning of the line.
@@ -801,6 +815,11 @@ Convert the mmSize variable from millimeters to dot.
 #### Method : `useEscAsteriskCommand(boolean enable)`
 Active "ESC *" command for image printing.
 - **param** `boolean enable` : true to use "ESC *", false to use "GS v 0"
+- **return** `Printer` : Fluent interface
+
+#### Method : `setImageProcessingDelay(int delayPerLine)`
+Set the image processing delay per line. Increase this value if paper cuts happen before image printing completes.
+- **param** `int delayPerLine` : Delay in milliseconds per line of image (default: 5)
 - **return** `Printer` : Fluent interface
 
 #### Method : `printFormattedText(String text)`

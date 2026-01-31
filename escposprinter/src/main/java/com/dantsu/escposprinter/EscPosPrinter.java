@@ -80,6 +80,20 @@ public class EscPosPrinter extends EscPosPrinterSize {
     }
 
     /**
+     * Set the image processing delay per line.
+     * Increase this value if paper cuts happen before image printing completes.
+     *
+     * @param delayPerLine Delay in milliseconds per line of image (default: 5)
+     * @return Fluent interface
+     */
+    public EscPosPrinter setImageProcessingDelay(int delayPerLine) {
+        if (this.printer != null) {
+            this.printer.setImageProcessingDelay(delayPerLine);
+        }
+        return this;
+    }
+
+    /**
      * Print a formatted text. Read the README.md for more information about text formatting options.
      *
      * @param text Formatted text to be printed.

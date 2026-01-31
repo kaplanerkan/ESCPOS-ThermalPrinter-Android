@@ -83,6 +83,7 @@ public class EscPosPrinterCommands {
     private EscPosCharsetEncoding charsetEncoding;
     private boolean useEscAsteriskCommand;
     private boolean cashBoxEnabled = true;
+    private int imageProcessingDelayPerLine = 5; // milliseconds per line of image
 
 
     public static byte[] initGSv0Command(int bytesByLine, int bitmapHeight) {
@@ -628,6 +629,27 @@ public class EscPosPrinterCommands {
     }
 
     /**
+     * Set the image processing delay per line.
+     * Increase this value if paper cuts happen before image printing completes.
+     *
+     * @param delayPerLine Delay in milliseconds per line of image (default: 5)
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands setImageProcessingDelay(int delayPerLine) {
+        this.imageProcessingDelayPerLine = delayPerLine;
+        return this;
+    }
+
+    /**
+     * Get the current image processing delay per line.
+     *
+     * @return Delay in milliseconds per line
+     */
+    public int getImageProcessingDelay() {
+        return this.imageProcessingDelayPerLine;
+    }
+
+    /**
      * Print image with the connected printer.
      *
      * @param image Bytes contain the image in ESC/POS command
@@ -640,9 +662,29 @@ public class EscPosPrinterCommands {
 
         byte[][] bytesToPrint = this.useEscAsteriskCommand ? EscPosPrinterCommands.convertGSv0ToEscAsterisk(image) : new byte[][]{image};
 
+        // Calculate image height from GS v 0 command header
+        int imageHeight = 0;
+        if (image.length >= 8) {
+            int yL = image[6] & 0xFF;
+            int yH = image[7] & 0xFF;
+            imageHeight = yH * 256 + yL;
+        }
+
         for (byte[] bytes : bytesToPrint) {
             this.printerConnection.write(bytes);
             this.printerConnection.send();
+        }
+
+        // Add processing delay based on image height
+        // This ensures the printer has time to process and print the image
+        // before executing subsequent commands (like paper cut)
+        if (imageHeight > 0 && this.imageProcessingDelayPerLine > 0) {
+            int processingTime = imageHeight * this.imageProcessingDelayPerLine;
+            try {
+                Thread.sleep(processingTime);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
 
         return this;
