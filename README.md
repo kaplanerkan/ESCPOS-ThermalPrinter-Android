@@ -1,5 +1,18 @@
 [![Android CI](https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android/actions/workflows/android.yml/badge.svg)](https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android/actions/workflows/android.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Release](https://img.shields.io/github/v/release/kaplanerkan/ESCPOS-ThermalPrinter-Android)](https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android/releases/latest)
+
+---
+
+## 📱 Test APK
+
+> **Quick Start:** Download the ready-to-use APK to test the library and demo app!
+>
+> [![Download APK](https://img.shields.io/badge/Download-APK-green?style=for-the-badge&logo=android)](https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android/releases/latest)
+>
+> Download `app-debug.apk` and install it on your device. Test your thermal printer via Bluetooth, USB, or TCP/IP.
+
+---
 
 ## Special Thanks
 
