@@ -57,11 +57,16 @@ public class UsbPrintHelper {
         void onError(String message);
     }
 
+    private boolean receiverRegistered = false;
+
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
+                // Unregister receiver after receiving permission result
+                unregisterUsbReceiver();
+
                 synchronized (this) {
                     UsbManager usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
                     UsbDevice usbDevice;
@@ -304,8 +309,26 @@ public class UsbPrintHelper {
         } else {
             activity.registerReceiver(usbReceiver, filter);
         }
+        receiverRegistered = true;
 
         usbManager.requestPermission(usbConnection.getDevice(), permissionIntent);
+    }
+
+    private void unregisterUsbReceiver() {
+        if (receiverRegistered) {
+            try {
+                activity.unregisterReceiver(usbReceiver);
+            } catch (Exception ignored) {
+            }
+            receiverRegistered = false;
+        }
+    }
+
+    /**
+     * Clean up resources. Call this when the helper is no longer needed.
+     */
+    public void cleanup() {
+        unregisterUsbReceiver();
     }
 
     private void executePrint(UsbConnection usbConnection) {

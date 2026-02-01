@@ -374,4 +374,13 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Cleanup USB receiver to prevent memory leak
+        if (usbHelper != null) {
+            usbHelper.cleanup();
+        }
+    }
 }

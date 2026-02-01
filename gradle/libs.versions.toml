@@ -22,9 +22,9 @@ zxing = "3.5.4"
 timber = "5.0.1"
 
 # Firebase
-firebaseBom = "33.7.0"
-googleServices = "4.4.2"
-firebaseCrashlytics = "3.0.2"
+firebaseBom = "34.8.0"
+googleServices = "4.4.4"
+firebaseCrashlytics = "3.0.6"
 
 [libraries]
 # AndroidX

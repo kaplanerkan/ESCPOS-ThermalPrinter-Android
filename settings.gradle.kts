@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google()
@@ -14,6 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ThermalPrinter"
+rootProject.name = "KarSu_ThermalPrinter"
 include(":app")
 include(":escposprinter")

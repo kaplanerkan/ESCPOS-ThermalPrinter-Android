@@ -1,7 +1,7 @@
 package com.karsu.thermalprinter;
 
 /*
- * ThermalPrinterApp.java
+ * KarSu ThermalPrinterApp.java
  *
  * Application class for ESC/POS Thermal Printer.
  * Initializes Timber logging with file and logcat output.
@@ -25,6 +25,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,22 +42,6 @@ public class ThermalPrinterApp extends Application {
 
     private static final String LOG_FILE_NAME = "escpos_printer_log.txt";
     private static File logDirectory;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        // Use app-specific external storage (no permission needed)
-        // Path: /storage/emulated/0/Android/data/com.karsu.thermalprinter/files/
-        logDirectory = getExternalFilesDir(null);
-
-        // Plant Timber trees
-        Timber.plant(new Timber.DebugTree()); // Logcat
-        Timber.plant(new FileLoggingTree());   // File in app-specific storage
-
-        Timber.i("=== ThermalPrinter App Started ===");
-        Timber.i("Log file: " + getLogFilePath());
-    }
 
     /**
      * Get the log file path.
@@ -74,14 +61,38 @@ public class ThermalPrinterApp extends Application {
         return logDirectory;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Use app-specific external storage (no permission needed)
+        // Path: /storage/emulated/0/Android/data/com.karsu.thermalprinter/files/
+        logDirectory = getExternalFilesDir(null);
+
+        // Plant Timber trees first (before Firebase)
+
+        Timber.plant(new FileLoggingTree());   // File in app-specific storage
+
+        Timber.i("=== ThermalPrinter App Started ===");
+        Timber.i("Log file: %s", getLogFilePath());
+
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this);
+
+        // Configure Crashlytics
+        FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+        crashlytics.setCrashlyticsCollectionEnabled(true);
+
+        Timber.i("Firebase initialized, Crashlytics enabled");
+    }
+
     /**
      * Custom Timber tree that writes logs to a file in app-specific storage.
      * No special permissions required.
      */
     public static class FileLoggingTree extends Timber.Tree {
 
-        private static final SimpleDateFormat DATE_FORMAT =
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
+        private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 
         @Override
         protected void log(int priority, @Nullable String tag, @NonNull String message, @Nullable Throwable t) {
@@ -103,26 +114,45 @@ public class ThermalPrinterApp extends Application {
             }
 
             try {
-                if (!logDirectory.exists()) {
-                    logDirectory.mkdirs();
-                }
+                File logFile = prepareLogFile();
+                if (logFile == null) return;
 
-                File logFile = new File(logDirectory, LOG_FILE_NAME);
+                writeLogEntry(logFile, priority, tag, message, t);
+            } catch (IOException e) {
+                Log.e("FileLoggingTree", "Error writing to log file", e);
+            }
+        }
 
-                // Limit file size to 5MB, rotate if needed
-                if (logFile.exists() && logFile.length() > 5 * 1024 * 1024) {
-                    File oldLog = new File(logDirectory, "escpos_printer_log_old.txt");
-                    if (oldLog.exists()) {
-                        oldLog.delete();
-                    }
-                    logFile.renameTo(oldLog);
-                    logFile = new File(logDirectory, LOG_FILE_NAME);
-                }
+        @Nullable
+        private File prepareLogFile() {
+            if (!logDirectory.exists() && !logDirectory.mkdirs()) {
+                return null;
+            }
 
-                FileWriter fw = new FileWriter(logFile, true);
-                PrintWriter pw = new PrintWriter(fw);
+            File logFile = new File(logDirectory, LOG_FILE_NAME);
 
-                String timestamp = DATE_FORMAT.format(new Date());
+            // Limit file size to 5MB, rotate if needed
+            if (logFile.exists() && logFile.length() > 5 * 1024 * 1024) {
+                rotateLogFile(logFile);
+            }
+
+            return new File(logDirectory, LOG_FILE_NAME);
+        }
+
+        private void rotateLogFile(File logFile) {
+            File oldLog = new File(logDirectory, "escpos_printer_log_old.txt");
+            if (oldLog.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                oldLog.delete();
+            }
+            //noinspection ResultOfMethodCallIgnored
+            logFile.renameTo(oldLog);
+        }
+
+        private void writeLogEntry(File logFile, int priority, String tag, String message, @Nullable Throwable t) throws IOException {
+            try (PrintWriter pw = new PrintWriter(new FileWriter(logFile, true))) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault());
+                String timestamp = dateFormat.format(new Date());
                 String priorityStr = getPriorityString(priority);
 
                 pw.println(timestamp + " " + priorityStr + "/" + tag + ": " + message);
@@ -130,24 +160,19 @@ public class ThermalPrinterApp extends Application {
                 if (t != null) {
                     t.printStackTrace(pw);
                 }
-
-                pw.flush();
-                pw.close();
-            } catch (IOException e) {
-                Log.e("FileLoggingTree", "Error writing to log file", e);
             }
         }
 
         private String getPriorityString(int priority) {
-            switch (priority) {
-                case Log.VERBOSE: return "V";
-                case Log.DEBUG: return "D";
-                case Log.INFO: return "I";
-                case Log.WARN: return "W";
-                case Log.ERROR: return "E";
-                case Log.ASSERT: return "A";
-                default: return "?";
-            }
+            return switch (priority) {
+                case Log.VERBOSE -> "V";
+                case Log.DEBUG -> "D";
+                case Log.INFO -> "I";
+                case Log.WARN -> "W";
+                case Log.ERROR -> "E";
+                case Log.ASSERT -> "A";
+                default -> "?";
+            };
         }
     }
 }
