@@ -7,3 +7,6 @@
 /captures
 .externalNativeBuild
 .cxx
+
+# Firebase
+google-services.json
