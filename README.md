@@ -10,7 +10,7 @@
 >
 > [![Download APK](https://img.shields.io/badge/Download-APK-green?style=for-the-badge&logo=android)](https://github.com/kaplanerkan/ESCPOS-ThermalPrinter-Android/releases/latest)
 >
-> Download `app-debug.apk` (v1.1.0) and install it on your device. Test your thermal printer via Bluetooth, BLE, USB, TCP/IP, or AP80 built-in printer.
+> Download `app-debug.apk` (v1.3.0) and install it on your device. Test your thermal printer via Bluetooth, BLE, USB, TCP/IP, or AP80 built-in printer.
 
 ---
 
