@@ -57,10 +57,12 @@ import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection;
 import com.dantsu.escposprinter.connection.bluetooth.BleDeviceScanner;
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothLeConnection;
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
+import com.dantsu.escposprinter.connection.ap80.Ap80Connection;
 import com.dantsu.escposprinter.connection.tcp.TcpConnection;
 import com.dantsu.escposprinter.connection.usb.UsbConnection;
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections;
 import com.karsu.thermalprinter.databinding.ActivitySettingsBinding;
+import com.karsu.thermalprinter.dialogs.Ap80TestPrintHelper;
 import com.karsu.thermalprinter.dialogs.BarcodeQrDialog;
 import com.karsu.thermalprinter.dialogs.FullTestPrintHelper;
 import com.karsu.thermalprinter.dialogs.PaperCashBoxDialog;
@@ -186,18 +188,27 @@ public class SettingsActivity extends AppCompatActivity {
                 binding.layoutBluetooth.setVisibility(View.VISIBLE);
                 binding.layoutBle.setVisibility(View.GONE);
                 binding.layoutTcp.setVisibility(View.GONE);
+                binding.layoutAp80.setVisibility(View.GONE);
             } else if (checkedId == R.id.radioBluetoothLe) {
                 binding.layoutBluetooth.setVisibility(View.GONE);
                 binding.layoutBle.setVisibility(View.VISIBLE);
                 binding.layoutTcp.setVisibility(View.GONE);
+                binding.layoutAp80.setVisibility(View.GONE);
             } else if (checkedId == R.id.radioUsb) {
                 binding.layoutBluetooth.setVisibility(View.GONE);
                 binding.layoutBle.setVisibility(View.GONE);
                 binding.layoutTcp.setVisibility(View.GONE);
+                binding.layoutAp80.setVisibility(View.GONE);
             } else if (checkedId == R.id.radioTcp) {
                 binding.layoutBluetooth.setVisibility(View.GONE);
                 binding.layoutBle.setVisibility(View.GONE);
                 binding.layoutTcp.setVisibility(View.VISIBLE);
+                binding.layoutAp80.setVisibility(View.GONE);
+            } else if (checkedId == R.id.radioAp80) {
+                binding.layoutBluetooth.setVisibility(View.GONE);
+                binding.layoutBle.setVisibility(View.GONE);
+                binding.layoutTcp.setVisibility(View.GONE);
+                binding.layoutAp80.setVisibility(View.VISIBLE);
             }
         });
 
@@ -376,6 +387,8 @@ public class SettingsActivity extends AppCompatActivity {
                         return;
                     }
                     currentConnection = new TcpConnection(ip, port);
+                } else if (binding.radioAp80.isChecked()) {
+                    currentConnection = new Ap80Connection(SettingsActivity.this);
                 }
 
                 printer = new EscPosPrinter(currentConnection, dpi, widthMm, charsPerLine);
@@ -511,7 +524,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void executeFullTestPrint() {
         if (!checkPrinterConnected()) return;
-        new FullTestPrintHelper(this, printer, executor).execute();
+
+        // Use AP80 native test when connected via AP80
+        if (currentConnection instanceof Ap80Connection) {
+            new Ap80TestPrintHelper(this, (Ap80Connection) currentConnection, executor).execute();
+        } else {
+            new FullTestPrintHelper(this, printer, executor).execute();
+        }
     }
 
     private boolean checkPrinterConnected() {

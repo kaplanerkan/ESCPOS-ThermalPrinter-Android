@@ -1,0 +1,58 @@
+package net.nyx.aposservice.print;
+
+import android.graphics.Bitmap;
+import net.nyx.aposservice.print.PrintTextFormat;
+
+interface IAPosService {
+    String getServiceVersion();
+    int getPrinterVersion(inout String[] ver);
+    int getPrinterModel(inout String[] model);
+    int getPrinterStatus(inout byte[] status);
+    int getPaperStatus();
+    int paperOut(int px);
+    int paperBack(int px);
+    int printText(String text, in PrintTextFormat format);
+    int printText2(String text, in PrintTextFormat format, int width, int align);
+    int printBarcode(String content, int width, int height, int textPosition, int align);
+    int printQrCode(String content, int width, int height, int align);
+    int printBitmap(in Bitmap bitmap, int type, int align);
+    int labelLocate(int labelHeight, int labelGap);
+    int labelPrintEnd();
+    int labelLocateAuto();
+    int labelDetectAuto();
+    boolean hasLabelLearning();
+    int clearLabelLearning();
+    int printRasterData(in byte[] data);
+    int printEscposData(in byte[] cmd);
+    int printTableText(in String[] texts, in int[] widths, in PrintTextFormat[] formats);
+    int printEndAutoOut();
+    int showLcdBitmap(in Bitmap bitmap);
+    int configLcd(int flag);
+    int openCashBox();
+    int triggerQscScan();
+    int setDensity(int density);
+    int getDensity(inout int[] density);
+    int getFirmwareVersion(inout String[] ver);
+    int getDeviceSerialNumber(inout String[] sn);
+    int UpgradeFirmware(String path, inout int[] progress);
+    boolean getUpgradeIsSuccess();
+    int getUpgradeProgress();
+    int getUpgradeProgressMax();
+    int setLcdBrightness(int brightness);
+    int setLcdLogo(in Bitmap bitmap);
+    String checkDisplay();
+    int getBatteryStatus();
+    int openRs232Port(int baudRate, int dataBits, int parity, int stopBits);
+    int closeRs232Port();
+    boolean writeRs232Port(in byte[] data, int timeout);
+    byte[] readRs232Port();
+    int openTaxControl();
+    int closeTaxControl();
+    int openMcuPower();
+    int closeMcuPower();
+    int setPrintSpeed(int speed);
+    int getPrintSpeed(inout int[] speed);
+    int getTmsClientVersion(inout String[] ver);
+    int printTestPage();
+    int sendRawPrintData(in byte[] data);
+}

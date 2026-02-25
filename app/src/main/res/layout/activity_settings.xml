@@ -55,6 +55,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TCP"/>
+
+            <RadioButton
+                android:id="@+id/radioAp80"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AP80"/>
         </RadioGroup>
     </LinearLayout>
 
@@ -144,6 +150,23 @@
             android:hint="Port"
             android:text="9100"
             android:inputType="number"/>
+    </LinearLayout>
+
+    <!-- AP80 Built-in Printer -->
+    <LinearLayout
+        android:id="@+id/layoutAp80"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="AP80 built-in printer (net.nyx.aposservice)"
+            android:textSize="12sp"
+            android:textColor="#666666"/>
     </LinearLayout>
 
     <!-- Printer Configuration (inline) -->

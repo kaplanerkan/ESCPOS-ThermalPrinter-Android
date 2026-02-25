@@ -10,3 +10,13 @@
 
 # Firebase
 google-services.json
+
+# Decompiled APKs and extracted files
+*.apk
+ap80_decompiled/
+ap80_extracted/
+aposservice_decompiled/
+APosService_b64.txt
+
+# Claude Code
+.claude/

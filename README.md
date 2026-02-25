@@ -44,7 +44,8 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 - **Responsive Design** - Optimized layouts for phones, tablets (7"+), and large kiosk displays (10"+)
 - **Turquoise Modern Theme** - Clean, modern UI with card-based design
 - **USB Auto-Detection** - Automatically detects and displays connected USB printer VID/PID
-- **Multiple Connection Types** - Bluetooth SPP, Bluetooth LE (BLE), USB, TCP/IP (WiFi/Ethernet)
+- **Multiple Connection Types** - Bluetooth SPP, Bluetooth LE (BLE), USB, TCP/IP (WiFi/Ethernet), AP80 Built-in Printer
+- **AP80 POS Terminal Support** - Native AIDL integration with `net.nyx.aposservice` for AP80 built-in thermal printer (bitmap printing, ESC/POS commands, cash box control)
 
 ### Library Features
 - **Batch Mode (USB & TCP)** - Buffers all data and sends in one transfer for faster printing
@@ -78,6 +79,7 @@ The app automatically adapts to different screen sizes:
 - [TCP](#tcp)
 - [USB](#usb)
 - [Raw ESC/POS Commands](#raw-escpos-commands)
+- [AP80 Built-in Printer (AIDL)](#ap80-built-in-printer-aidl)
 - [Cash Drawer Control](#cash-drawer-control)
 - [Printer Status](#printer-status)
 - [Charset encoding](#charset-encoding)
@@ -107,6 +109,8 @@ This fork includes numerous improvements and bug fixes:
 - **Font Selection** - Choose between fonts A, B, C, D, E with `<font font='b'>` (#555)
 - **Strikethrough Text** - Add strikethrough effect with `<s>` tag (#556)
 - **Image Processing Delay** - Configurable delay to prevent premature paper cutting (#533)
+- **AP80 Built-in Printer Support** - Native AIDL integration with `net.nyx.aposservice` for AP80 POS terminal's built-in thermal printer (bitmap printing, ESC/POS commands, cash box, density control)
+- **AP80 Native Test Print** - `Ap80TestPrintHelper` with programmatic demo logo bitmap and ESC/POS receipt
 
 ### Bug Fixes
 - **Android 14 Compatibility** - Fixed `registerReceiver` crash with `RECEIVER_NOT_EXPORTED` flag
@@ -117,6 +121,7 @@ This fork includes numerous improvements and bug fixes:
 - **Barcode/QR Centering** - Fixed alignment issues when printing barcode then QR code (#542)
 - **AGP 8.x Compatibility** - Fixed "SoftwareComponent 'release' not found" error (#567)
 - **USB Connection** - Improved compatibility with non-standard USB printers (#498)
+- **BLE GATT Race Condition** - Fixed concurrent `requestMtu()` and `discoverServices()` calls causing connection failures on some devices; operations are now sequential
 
 ### Performance
 - **Optimized Image Processing** - `bitmapToBytes()` uses batch pixel retrieval for faster processing (#490)
@@ -133,7 +138,7 @@ This fork includes numerous improvements and bug fixes:
 All printer connection errors and operations are logged for debugging purposes:
 
 ### Logcat
-Filter by tags containing: `DeviceConnection`, `TcpConnection`, `UsbConnection`, `BluetoothConnection`, `BluetoothLeConnection`, `BleDeviceScanner`
+Filter by tags containing: `DeviceConnection`, `TcpConnection`, `UsbConnection`, `BluetoothConnection`, `BluetoothLeConnection`, `BleDeviceScanner`, `Ap80Connection`, `Ap80TestPrint`
 
 ### Log File
 Logs are automatically saved to app-specific storage:
@@ -569,6 +574,133 @@ commands.send();
 ```java
 byte[] bytes = EscPosPrinterCommands.hexStringToBytes("1B 40 1B 61 01");
 ```
+
+## AP80 Built-in Printer (AIDL)
+
+The AP80 POS terminal has a built-in 58mm thermal printer accessible via the `net.nyx.aposservice` system service. This library provides native AIDL integration through `Ap80Connection`, which communicates directly with the printer hardware (serial port `/dev/ttyS9` at 460800 baud) via the system service.
+
+### How It Works
+
+Unlike Bluetooth/USB/TCP connections that send ESC/POS data over a network transport, the AP80 connection binds to the `net.nyx.aposservice` Android service using AIDL (Android Interface Definition Language). Commands are sent via `Parcel.transact()` calls to the service binder.
+
+```
+App → Ap80Connection → AIDL Binder → net.nyx.aposservice → /dev/ttyS9 → Thermal Printer
+```
+
+### Connection
+
+```java
+// Create and connect
+Ap80Connection connection = new Ap80Connection(context);
+connection.connect(); // Binds to net.nyx.aposservice (5s timeout)
+
+// Use with EscPosPrinter (standard library flow)
+EscPosPrinter printer = new EscPosPrinter(connection, 203, 48f, 32);
+printer.printFormattedText("[C]<b>Hello AP80!</b>\n");
+
+// Disconnect when done
+connection.disconnect();
+```
+
+### Available Methods
+
+`Ap80Connection` extends `DeviceConnection` and adds these AP80-specific methods:
+
+| Method | Transaction ID | Description |
+|--------|---------------|-------------|
+| `printBitmap(Bitmap, type, align)` | 11 | Print bitmap image. type: 0=normal, 1=B&W threshold. align: 0=left, 1=center, 2=right |
+| `printText(String, Parcelable)` | 7 | Print text with PrintTextFormat formatting |
+| `printEscposData(byte[])` | 19 | Send raw ESC/POS command bytes |
+| `getPrinterStatus()` | 4 | Query printer status (0=ready) |
+| `paperOut(int px)` | 5 | Feed paper by specified pixels |
+| `openCashBox()` | 24 | Open cash drawer |
+| `setDensity(int)` | 26 | Set print density (70-130, default 100) |
+| `getServiceBinder()` | — | Get raw IBinder for advanced operations |
+
+The standard `send()` method (inherited from `DeviceConnection`) uses transaction ID 51 (`sendRawPrintData`) to transmit accumulated ESC/POS data.
+
+### Ap80TestPrintHelper
+
+The `Ap80TestPrintHelper` class provides a complete native test print that bypasses the EscPosPrinter formatting layer and talks directly to the AP80 service. It demonstrates:
+
+**Bitmap Printing:**
+- Programmatically generates a demo logo (360x160px) with printer icon, title, and border
+- Generates a receipt footer (360x80px) with decorative elements
+- Uses `Bitmap.Config.RGB_565` for optimal thermal printing
+- Prints via `printBitmap()` with B&W threshold mode and center alignment
+
+**ESC/POS Text Commands (via `printEscposData`):**
+- `ESC @` (0x1B 0x40) — Initialize printer
+- `GS L nL nH` (0x1D 0x4C) — Set left margin (16 dots ≈ 2mm)
+- `ESC a n` (0x1B 0x61) — Set alignment (0=left, 1=center, 2=right)
+- `ESC E n` (0x1B 0x45) — Bold on/off
+- `GS ! n` (0x1D 0x21) — Character size (0x00=normal, 0x11=double width+height)
+
+**Test Receipt Structure:**
+```
+┌──────────────────────┐
+│  [Demo Logo Bitmap]  │  ← 360x160px programmatic bitmap
+│                      │
+│   AP80 TEST PRINT    │  ← ESC/POS center + bold + double size
+│  ================    │
+│  2026-02-25 14:30    │  ← Current date/time
+│                      │
+│  Item      Qty Price │  ← Left-aligned text
+│  ─────────────────── │
+│  Espresso    2  4.00 │
+│  Cappuccino  1  3.50 │
+│  Cheesecake  1  5.50 │
+│  ─────────────────── │
+│      TOTAL: 13.00 EUR│  ← Right-aligned bold
+│                      │
+│  [Footer Bitmap]     │  ← 360x80px with credits
+│                      │
+│     Thank you!       │  ← Center-aligned
+└──────────────────────┘
+```
+
+**Usage:**
+```java
+if (currentConnection instanceof Ap80Connection) {
+    Ap80Connection ap80 = (Ap80Connection) currentConnection;
+    new Ap80TestPrintHelper(context, ap80, executorService).execute();
+}
+```
+
+### Direct Bitmap Printing
+
+```java
+Ap80Connection connection = new Ap80Connection(context);
+connection.connect();
+
+// Print a bitmap (e.g., from resources or camera)
+Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+int result = connection.printBitmap(bitmap, 1, 1); // type=B&W, align=center
+bitmap.recycle();
+
+// Feed paper after printing
+connection.paperOut(80);
+```
+
+### Direct ESC/POS Commands
+
+```java
+// Send raw ESC/POS commands for fine-grained control
+byte[] initCmd = new byte[]{0x1B, 0x40}; // ESC @ = Initialize
+connection.printEscposData(initCmd);
+
+byte[] centerAlign = new byte[]{0x1B, 0x61, 0x01}; // ESC a 1 = Center
+connection.printEscposData(centerAlign);
+
+byte[] textData = "Hello AP80!\n".getBytes(StandardCharsets.ISO_8859_1);
+connection.printEscposData(textData);
+```
+
+### Requirements
+
+- AP80 POS terminal (or compatible device with `net.nyx.aposservice`)
+- The `net.nyx.aposservice` system service must be installed on the device
+- No special permissions required (service binding only)
 
 ## Cash Drawer Control
 

@@ -174,19 +174,21 @@ public class BluetoothLeConnection extends DeviceConnection {
         @SuppressLint("MissingPermission")
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (bluetoothGatt == null) return;
             Timber.tag(TAG).d( "onConnectionStateChange: status=" + status + ", newState=" + newState);
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 isConnected = true;
                 connectionLatch.countDown();
 
-                // Request higher MTU
+                // Request higher MTU first, then discover services in onMtuChanged callback
+                // IMPORTANT: Android BLE stack does not support concurrent GATT operations
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     gatt.requestMtu(REQUESTED_MTU);
+                } else {
+                    // Fallback for old devices that don't support MTU negotiation
+                    gatt.discoverServices();
                 }
-
-                // Discover services
-                gatt.discoverServices();
 
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 isConnected = false;
@@ -199,18 +201,25 @@ public class BluetoothLeConnection extends DeviceConnection {
             }
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
+            if (bluetoothGatt == null) return;
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 mtuSize = mtu;
                 chunkSize = Math.max(20, mtu - 3);
                 Timber.tag(TAG).i( "MTU changed to: " + mtu);
+            } else {
+                Timber.tag(TAG).w( "MTU negotiation failed with status: " + status + ", using default MTU");
             }
+            // Now that MTU negotiation is complete, discover services sequentially
+            gatt.discoverServices();
         }
 
         @SuppressLint("MissingPermission")
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (bluetoothGatt == null) return;
             Timber.tag(TAG).d( "onServicesDiscovered: status=" + status);
 
             if (status == BluetoothGatt.GATT_SUCCESS) {
@@ -223,6 +232,7 @@ public class BluetoothLeConnection extends DeviceConnection {
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            if (bluetoothGatt == null) return;
             if (writeLatch != null) {
                 writeLatch.countDown();
             }
